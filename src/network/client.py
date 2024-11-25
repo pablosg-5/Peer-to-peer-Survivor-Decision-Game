@@ -1,18 +1,20 @@
 import socket
 
-def start_client(server_ip='localhost', server_port=12345):
+def start_client(server_ip, server_port):
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_socket.connect((server_ip, server_port)) 
-
+    
     try:
-        message = "Hello from client!"
-        print(f"Sending: {message}")
-        client_socket.sendall(message.encode())
-
-        data = client_socket.recv(1024)
-        print(f"Received: {data.decode()}")
+        
+        client_socket.connect((server_ip, server_port))
+        print(f"Successfully connected to {server_ip}:{server_port}")
+        
+       
+        message = client_socket.recv(1024).decode()
+        print("Server says:", message)
+        
+    except Exception as e:
+        print(f"Failed to connect: {e}")
+    
     finally:
         client_socket.close()
 
-if __name__ == '__main__':
-    start_client()
