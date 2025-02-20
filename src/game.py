@@ -34,10 +34,35 @@ class Game:
                 "¿Buscar ayuda en la isla (1) o intentar encontrar un antídoto en la naturaleza (2)?",
                 "choices": [1, 2]
             },
-            # Escenario 2B: Buscar otra fuente de alimento
+            # Escenario 2B: Uno come los frutos otro busca otra fuente de alimento
+            {
+                "scenario": "Algunos frutos resultan ser venenosos, al ingerirlos quedas envenendado e incapaz de hacer nada. Al intentar buscar otra fuente de alimentos no te das cuenta de que tu compañero esta en grave estado, por tanto muere solo. Al seguir buscando alimento caes por un barranco sin darte cuenta y mueres " +
+                "Final del juego 1",
+                "choices": []
+            },
+
+            # Escenario 2C: Buscar otra fuente de alimento
             {
                 "scenario": "Deciden buscar otra fuente de alimento. Encuentran un río con peces, pero no tienen herramientas para pescar. " +
                 "¿Intentar pescar con las manos (1) o seguir buscando (2)?",
+                "choices": [1, 2]
+            },
+            # Escenario 3A: Ambos buscan ayuda en la isla
+            {
+                "scenario": "Ambos deciden buscar ayuda en la isla. Después de caminar un rato, encuentran una choza de un hombre solitario. El hombre les ofrece medicina para el veneno, pero les advierte que tiene un precio. " +
+                "¿Aceptar la oferta del hombre y ayudarle a recolectar hierbas en un pantano peligroso (1) o Rechazar la oferta y seguir buscando una forma alternativa de curarse (2)?",
+                "choices": [1, 2]
+            },
+            # Escenario 3B: Uno busca ayuda, otro antídoto
+            {
+                "scenario": "Al intentar buscar ayuda, se pierde en la jungla y desaparece para siempre. El que buscaba un antidoto natural, cae por un barranco sin darse cuenta y muere" +
+                "Final del juego 2",
+                "choices": []
+            },
+            # Escenario 3C: Ambos buscan antídoto
+            {
+                "scenario": "Ambos se adentran en el bosque buscando plantas curativas. Tras varias horas de búsqueda, uno de los personajes cae en un pozo venenoso y el veneno se propaga rápidamente. " +
+                "¿Intentar salir del pozo a toda prisa, incluso si eso pone en riesgo tu vida (1) o Quedarte en el pozo, esperando encontrar una salida más segura mientras los efectos del veneno avanzan (2)?",
                 "choices": [1, 2]
             },
             # Escenario 3A: Entrar a la cueva
@@ -228,75 +253,75 @@ class Game:
         ]
 
         self.current_scenario = 0  # Escenario actual
-            self.player_decision= None  # Decisión del jugador 1
-            self.other_player_decision= None  # Decisión del jugador 2
+        self.player_decision = None  # Decisión del jugador 1
+        self.other_player_decision = None  # Decisión del jugador 2
 
-            def get_scenario(self, index):
-            """Devuelve el escenario en la posición `index`."""
-            return self.scenarios[index]
+    def get_scenario(self, index):
+        """Devuelve el escenario en la posición `index`."""
+        return self.scenarios[index]
 
-            def both_players_responded(self):
-            """Verifica si ambos jugadores han respondido."""
-            return self.player_decision is not None and self.other_player_decision is not None
+    def both_players_responded(self):
+        """Verifica si ambos jugadores han respondido."""
+        return self.player_decision is not None and self.other_player_decision is not None
 
-            def reset_decisions(self):
-            """Reinicia las decisiones para el siguiente escenario."""
-            self.player_decision= None
-            self.other_player_decision= None
+    def reset_decisions(self):
+        """Reinicia las decisiones para el siguiente escenario."""
+        self.player_decision = None
+        self.other_player_decision = None
 
-            def process_decisions(self):
-            """
+    def process_decisions(self):
+        """
         Define aquí la lógica de transición entre escenarios.
         Puedes modificar esta función para que las decisiones de los jugadores
         lleven a escenarios específicos.
         """
-            if self.current_scenario == 0:
+        if self.current_scenario == 0:
             # Escenario 0: Construir refugio (1) o buscar comida (2)
             if self.player_decision == self.other_player_decision:
-            self.current_scenario = 1  # Ambos eligen lo mismo: ir al escenario 1
+                self.current_scenario = 1  # Ambos eligen lo mismo: ir al escenario 1
             else:
-            self.current_scenario = 2  # Decisiones distintas: ir al escenario 2
+                self.current_scenario = 2  # Decisiones distintas: ir al escenario 2
 
-            elif self.current_scenario == 1:
+        elif self.current_scenario == 1:
             # Escenario 1: Enfrentar animal (1) o huir (2)
             if self.player_decision == self.other_player_decision:
-            self.current_scenario = 3  # Ambos eligen lo mismo: ir al escenario 3
+                self.current_scenario = 3  # Ambos eligen lo mismo: ir al escenario 3
             else:
-            self.current_scenario = 4  # Decisiones distintas: ir al escenario 4
+                self.current_scenario = 4  # Decisiones distintas: ir al escenario 4
 
-            elif self.current_scenario == 2:
+        elif self.current_scenario == 2:
             # Escenario 2: Entrar a la cueva (1) o buscar comida (2)
             if self.player_decision == self.other_player_decision:
-            self.current_scenario = 5  # Ambos eligen lo mismo: ir al escenario 5
+                self.current_scenario = 5  # Ambos eligen lo mismo: ir al escenario 5
             else:
-            self.current_scenario = 6  # Decisiones distintas: ir al escenario 6
+                self.current_scenario = 6  # Decisiones distintas: ir al escenario 6
 
-            elif self.current_scenario == 3:
+        elif self.current_scenario == 3:
             # Escenario 3: Reparar bote (1) o quedarse (2)
             if self.player_decision == self.other_player_decision:
-            self.current_scenario = 7  # Ambos eligen lo mismo: ir al escenario 7
+                self.current_scenario = 7  # Ambos eligen lo mismo: ir al escenario 7
             else:
-            self.current_scenario = 8  # Decisiones distintas: ir al escenario 8
+                self.current_scenario = 8  # Decisiones distintas: ir al escenario 8
 
-            elif self.current_scenario == 4:
+        elif self.current_scenario == 4:
             # Escenario 4: Señalar barco (1) o ignorarlo (2)
             if self.player_decision == self.other_player_decision:
-            self.current_scenario = 9  # Ambos eligen lo mismo: ir al escenario 9
+                self.current_scenario = 9  # Ambos eligen lo mismo: ir al escenario 9
             else:
-            self.current_scenario = 10  # Decisiones distintas: ir al escenario 10
+                self.current_scenario = 10  # Decisiones distintas: ir al escenario 10
 
-            elif self.current_scenario == 5:
+        elif self.current_scenario == 5:
             # Escenario 5: Ser rescatado (1) o explorar más (2)
             if self.player_decision == self.other_player_decision:
-            self.current_scenario = 11  # Ambos eligen lo mismo: ir al escenario 11
+                self.current_scenario = 11  # Ambos eligen lo mismo: ir al escenario 11
             else:
-            self.current_scenario = 12  # Decisiones distintas: ir al escenario 12
+                self.current_scenario = 12  # Decisiones distintas: ir al escenario 12
 
-            # Añade más condiciones para los demás escenarios...
-            else:
+        # Añade más condiciones para los demás escenarios...
+        else:
             # Si no hay más escenarios, termina el juego
             self.current_scenario = -1  # Fin del juego
 
-            def get_results(self):
-            """Genera los resultados basados en las decisiones de ambos jugadores."""
-            return f"Your decision: {self.player_decision}, Other player's decision: {self.other_player_decision}"
+    def get_results(self):
+        """Genera los resultados basados en las decisiones de ambos jugadores."""
+        return f"Your decision: {self.player_decision}, Other player's decision: {self.other_player_decision}"
