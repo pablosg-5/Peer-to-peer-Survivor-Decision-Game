@@ -47,6 +47,13 @@ class Game:
                 "¿Intentar pescar con las manos (1) o seguir buscando (2)?",
                 "choices": [1, 2]
             },
+            # Escenario 4A: Pescar con las manos
+            {
+                "scenario": "Intentan pescar con las manos, pero los peces son demasiado rápidos. " +
+                "Después de varios intentos fallidos, uno de ustedes encuentra una lanza improvisada en la orilla. " +
+                "¿Intentar pescar con la lanza (1) o seguir buscando otra fuente de alimento (2)?",
+                "choices": [1, 2]
+            },
             # Escenario 3A: Ambos buscan ayuda en la isla - Viene de 2A
             {
                 "scenario": "Ambos deciden buscar ayuda en la isla. Después de caminar un rato, encuentran una choza de un hombre solitario. El hombre les ofrece medicina para el veneno, pero les advierte que tiene un precio. " +
@@ -314,7 +321,7 @@ class Game:
             # Escenario 14B: Viene de 13B , ambos buscan salida alternativa
             {
                 "scenario": "Buscan otra salida y encuentran un túnel que los lleva a una playa desierta. " +
-                "Intentan construir una balsa con los restos del naufragio. Después de varios intentos, logran zarpar y ser rescatados a las pocas semanas en alta mar."+
+                "Intentan construir una balsa con los restos del naufragio. Después de varios intentos, logran zarpar y ser rescatados a las pocas semanas en alta mar." +
                 "Final del juego 26",
                 "choices": []
             },
@@ -324,7 +331,6 @@ class Game:
                 "Final del juego 25",
                 "choices": []
             },
-            
 
 
 
@@ -334,13 +340,8 @@ class Game:
 
 
 
-            # Escenario 4A: Pescar con las manos
-            {
-                "scenario": "Intentan pescar con las manos, pero los peces son demasiado rápidos. " +
-                "Después de varios intentos fallidos, uno de ustedes encuentra una lanza improvisada en la orilla. " +
-                "¿Intentar pescar con la lanza (1) o seguir buscando otra fuente de alimento (2)?",
-                "choices": [1, 2]
-            },
+
+
             # Escenario 5A: Defenderse del oso
             {
                 "scenario": "Deciden enfrentar al oso con ramas y piedras. La criatura se muestra agresiva, pero con esfuerzo logran ahuyentarlo. " +
