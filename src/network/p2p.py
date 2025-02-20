@@ -2,6 +2,7 @@ import socket
 from game import Game
 import threading
 
+
 def handle_client(client_socket, game):
     try:
         while game.current_scenario < len(game.scenarios):
@@ -18,6 +19,7 @@ def handle_client(client_socket, game):
     finally:
         client_socket.close()
 
+
 def start_p2p(host, port, is_server):
     game = Game()  # Instancia compartida (solo para lógica local)
 
@@ -33,16 +35,19 @@ def start_p2p(host, port, is_server):
         print(f"Conectado a {addr}")
 
         # Hilo para manejar al cliente
-        threading.Thread(target=handle_client, args=(client_socket, game)).start()
+        threading.Thread(target=handle_client, args=(
+            client_socket, game)).start()
 
         # Lógica del servidor
         while game.current_scenario < len(game.scenarios):
             scenario = game.get_scenario(game.current_scenario)
-            print(f"\nEscenario {game.current_scenario + 1}: {scenario['scenario']}")
+            print(
+                f"\nEscenario {game.current_scenario + 1}: {scenario['scenario']}")
 
             # Obtener decisión del servidor
             decision = input("Tu decisión (1/2): ")
-            client_socket.sendall(decision.encode())  # Enviar decisión al cliente
+            # Enviar decisión al cliente
+            client_socket.sendall(decision.encode())
 
             # Esperar respuesta del cliente
             while game.other_player_decision is None:
@@ -70,7 +75,8 @@ def start_p2p(host, port, is_server):
 
             # Obtener decisión del cliente
             decision = input("Tu decisión (1/2): ")
-            client_socket.sendall(decision.encode())  # Enviar decisión al servidor
+            # Enviar decisión al servidor
+            client_socket.sendall(decision.encode())
 
             # Esperar respuesta del servidor
             other_decision = client_socket.recv(1024).decode()
