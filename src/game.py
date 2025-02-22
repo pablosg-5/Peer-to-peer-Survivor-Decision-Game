@@ -47,18 +47,61 @@ class Game:
                 "¿Intentar pescar con las manos (1) o seguir buscando (2)?",
                 "choices": [1, 2]
             },
-            # Escenario 4A: Pescar con las manos
+            # Escenario 3D: Viene de 2C, Ambos eligen pescar con las manos
             {
                 "scenario": "Intentan pescar con las manos, pero los peces son demasiado rápidos. " +
                 "Después de varios intentos fallidos, uno de ustedes encuentra una lanza improvisada en la orilla. " +
                 "¿Intentar pescar con la lanza (1) o seguir buscando otra fuente de alimento (2)?",
                 "choices": [1, 2]
             },
+            # Escenario 4G: Viene de 3D, Ambos eligen pezcar con la lanza
+            {
+                "scenario": "Consiguen pescar un pez grande y lo cocinan en una fogata improvisada. " +
+                "El alimento les da energía para explorar la isla. Algo que les hace acabar adaptandose a la isla y debido a la imposibilidad de lograr ser rescatados acaban quedandose a vivir " +
+                "Final del juego 26",
+                "choices": []
+            },
+            # Escenario 4I: Viene de 3D, Ambos eligen cosas distintas
+            {
+                "scenario": " Al separar vuestros caminos, uno desaparece en extrañas condiciones en la jungla y el otro es atacado por un oso en el bosque llevando a su muerte " +
+                "Final del juego 3",
+                "choices": []
+            },
+            # Escenario 3F:Viene de 2C, Ambos elijen seguir buscando
+            {
+                "scenario": " Ambos caen en una trampa natural mientras exploran y mueren" +
+                "Final del juego 2",
+                "choices": []
+            },
+            # Escenario 3E: Viene de 2C, Ambos elijen cosas distintas
+            {
+                "scenario": "Mientras discuten sobre que hacer, son atacados por un oso que lo mata" +
+                "Final del juego 1",
+                "choices": []
+            },
             # Escenario 3A: Ambos buscan ayuda en la isla - Viene de 2A
             {
                 "scenario": "Ambos deciden buscar ayuda en la isla. Después de caminar un rato, encuentran una choza de un hombre solitario. El hombre les ofrece medicina para el veneno, pero les advierte que tiene un precio. " +
                 "¿Aceptar la oferta del hombre y ayudarle a recolectar hierbas en un pantano peligroso (1) o Rechazar la oferta y seguir buscando una forma alternativa de curarse (2)?",
                 "choices": [1, 2]
+            },
+             # Escenario 4E: Viene de 3A, ambos elijen seguir buscando
+            {
+                "scenario": "Al rechazar la oferta del hombre, deciden seguir buscando una forma alternativa de curarse. Sin embargo, el veneno se propaga rápidamente y ambos mueren al amanecer" +
+                "Final del juego 4",
+                "choices": []
+            },
+             # Escenario 4F: Viene de 3A, ambos elijen cosas distintas
+            {
+                "scenario": "Al decidir separarse, uno de ustedes cae en una trampa natural y muere en el acto, mientras que el otro, al no conseguir antidoto, muere debido al veneno"+
+                "Final del juego 3",
+                "choices": []
+            },
+             # Escenario 4D: Viene de 3A, ambos elijen aceptar
+            {
+                "scenario": "Ambos mueren en el pantano debido a las criaturas que lo habitan y a la falta de conocimiento de la zona" +    
+                "Final del juego 3",
+                "choices": []
             },
             # Escenario 3B: Uno busca ayuda, otro antídoto - Viene de 2A
             {
@@ -78,11 +121,42 @@ class Game:
                 "¿Intentar defenderse (1) o huir (2)?",
                 "choices": [1, 2]
             },
-            # Escenario 2E: Buscar otro lugar - Viene de 1C
+             # Escenario 2F: Viene de 1B, uno entra a la cueva y otro busca comida
             {
-                "scenario": "Deciden buscar otro lugar para refugiarse. Encuentran un árbol grande con ramas gruesas. " +
-                "¿Construir un refugio en el árbol (1) o seguir buscando (2)?",
-                "choices": [1, 2]
+                "scenario": "El que entra a la cueva es asesinado por un oso, mientras que el que se come los frutos es envenenado de muerte " +
+                "Final del juego 2",
+                "choices": []
+            },
+
+             # Escenario 3G: Viene de 2D, Defenderse del oso
+            {
+                "scenario": "Deciden enfrentar al oso con ramas y piedras. La criatura se muestra agresiva, pero con esfuerzo logran ahuyentarlo. Lo que les permite encontrar en la cueva una pistola de bengalas que les ayuda a ser rescatados en la playa por un barco " +
+                "Final del juego 25",
+                "choices": []
+            },
+            # Escenario 3H: Viene de 2D, Huir del oso
+            {
+                "scenario": "Intentan huir del oso, pero sois alcanzados y asesinados brutalmente." +
+                "Final del juego 3",
+                "choices": []
+            },
+             # Escenario 3I: Viene de 2D, ambos eligen distintas opciones
+            {
+                "scenario": "Al intentar uno defenderse solo, es asesinado por el oso, el otro al intentar huir, se tropieza con un hoyo y muere debido al golpe en la cabeza" +
+                "Final del juego 2",
+                "choices": []
+            },
+            # Escenario 2G: Buscar otro lugar - Viene de 1C
+            {
+                "scenario": "Al buscar otro lugar encuentran una especie de refugio abandonado. En el encuentran una radio que los ayuda a comunicar lo sucedido y ser rescatados" +
+                "Final del juego 2",
+                "choices": []
+            },
+            # Escenario 2E: Ambos eligen cosas distintas - Viene de 1C
+            {
+                "scenario": "El que entra a la cueva es asesinado por un oso, mientras que el otro se pierde en el bosque y fallece en misteriosas condiciones " +
+                "Final del juego 2",
+                "choices": []
             },
             # Escenario 4A: Ambos intentan salir del pozo - Viene de 3C
             {
@@ -164,6 +238,24 @@ class Game:
                 "Sienten un poder oscuro envolviéndolos. " +
                 "¿Aceptar el trato (1) o rechazarlo y huir (2)?",
                 "choices": [1, 2]
+            },
+            # Escenario 7D:Viene de 6C, Ambos eligen aceptar el trato
+            {
+                "scenario": "Se convierten en guardianes de la isla con todos los conocimientos y secretos de esta. Por tanto, aprenden a vivir en la isla y quedarse para siempre." +
+                "Final del juego 29",
+                "choices": []
+            },
+            # Escenario 7E:Viene de 6C, Ambos eligen rechazar el trato
+            {
+                "scenario": "Al rechazar el trato, ambos sufren una muerte subita para poder proteger los secretos de la isla" +
+                "Final del juego 28",
+                "choices": []
+            },
+            # Escenario 7F:Viene de 6C, Ambos eligen cosas distintas
+            {
+                "scenario": "Al aceptar el trato solo uno, se convierte en el guardian de la isla y asesina a su compañero para proteger los secretos de esta" +
+                "final del juego 27",
+                "choices": []
             },
             # Escenario 6D: Viene de 5C, Ambos deciden seguir explorando
             {
@@ -330,23 +422,6 @@ class Game:
                 "scenario": "Al no ponerse de acuerdo son sepultados por las piedras que van cayendo, dejando sus cuerpos sellados con la cueva" +
                 "Final del juego 25",
                 "choices": []
-            },
-
-
-
-
-
-
-
-
-
-
-
-            # Escenario 5A: Defenderse del oso
-            {
-                "scenario": "Deciden enfrentar al oso con ramas y piedras. La criatura se muestra agresiva, pero con esfuerzo logran ahuyentarlo. " +
-                "Sin embargo, uno de ustedes queda herido. ¿Descansar y recuperarse (1) o seguir explorando la cueva (2)?",
-                "choices": [1, 2]
             },
         ]
 
