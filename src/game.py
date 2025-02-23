@@ -1,8 +1,6 @@
-
 class Game:
     def __init__(self):
-        self.scenarios = [ 
-            # NIVEL 0: INTRODUCCIÓN
+        self.scenarios = [# NIVEL 0: INTRODUCCIÓN
             {
                 "scenario": "Tu barco ha sido sacudido por una tormenta y nadie ha sobrevivido, más que tú y tu compañero. Perdiste al resto de tus compañeros durante el incidente. Cuando recuperas el conocimiento, ambos están varados en la orilla de una isla desconocida. El sol se acerca al horizonte y la incertidumbre se cierne sobre ustedes. Tienen que actuar rápido: buscar comida (1) o buscar refugio (2).",
                 "choices": [1, 2]
@@ -460,17 +458,8 @@ class Game:
                 "scenario": "Al no ponerse de acuerdo, son sepultados por las piedras que van cayendo, dejando sus cuerpos sellados con la cueva. Final del juego 41",
                 "choices": []
             }
-        ]
-        
-        self.current_scenario = 0
-        self.player_decision = None
-        self.other_player_decision = None
-        self.game_over = False
-        self.game_result = None
-
-
-
-        self.transitions ={           
+        ] 
+        self.transitions = {           
             # NIVEL 0
             0: {
                 (1, 1): 1, (2, 2): 3, (1, 2): 2, (2, 1): 2
@@ -567,108 +556,76 @@ class Game:
             63: {
                 (1, 1): 69, (2, 2): 70, (1, 2): 71, (2, 1): 71
             }}
-
+        self.current_scenario = 0
+        self.player_decision = None
+        self.other_player_decision = None
+        self.game_over = False
+        self.game_result = None
+        self.restart = False
 
     def process_decisions(self):
-        """Procesa las decisiones de ambos jugadores y actualiza el escenario"""
         if self.game_over:
             return
 
-        # Verificar si el escenario actual es final
-        current_scenario = self.scenarios[self.current_scenario]
-        if not current_scenario["choices"]:
+        current = self.scenarios[self.current_scenario]
+        if not current["choices"]:
             self.game_over = True
-            self.game_result = current_scenario["scenario"]
+            self.game_result = current["scenario"]
             return
 
-        # Obtener la clave de transición
         key = (self.player_decision, self.other_player_decision)
-            
-        # Obtener transiciones posibles para el escenario actual
         transitions = self.transitions.get(self.current_scenario, {})
         next_scenario = transitions.get(key, -1)
 
-        # Validar la transición
         if next_scenario == -1 or not (0 <= next_scenario < len(self.scenarios)):
             self.game_over = True
             self.game_result = "Error: Transición inválida"
             return
 
-        # Actualizar el escenario
         self.current_scenario = next_scenario
-            
-        # Verificar si el nuevo escenario es final
         new_scenario = self.scenarios[next_scenario]
+        
         if not new_scenario["choices"]:
             self.game_over = True
             self.game_result = new_scenario["scenario"]
 
-    # Resto de métodos se mantienen igual
     def get_state(self):
         return {
             "current_scenario": self.current_scenario,
             "player_decision": self.player_decision,
             "other_player_decision": self.other_player_decision,
             "game_over": self.game_over,
-            "game_result": self.game_result
+            "game_result": self.game_result,
+            "restart": self.restart
         }
 
-    def get_scenario(self, index=None):
-        """Devuelve el escenario actual con su índice incluido"""
+    def set_state(self, state):
+        self.current_scenario = state["current_scenario"]
+        self.other_player_decision = state.get("other_player_decision", None)
+        self.game_over = state["game_over"]
+        self.game_result = state.get("game_result")
+        self.restart = state.get("restart", False)
+
+    def get_scenario(self):
         if self.game_over:
             return {
                 "scenario": self.game_result,
                 "choices": [],
-                "final": True,
-                "current_scenario": self.current_scenario  # Añadir esta línea
+                "current_scenario": self.current_scenario
             }
         return {
             **self.scenarios[self.current_scenario],
-            "current_scenario": self.current_scenario  # Añadir clave crítica
+            "current_scenario": self.current_scenario
         }
-    
-    def _get_valid_decision(self, choices):
-        """Valida la entrada del usuario (método faltante)"""
-        while True:
-            try:
-                decision = int(input(f"Elige una opción {choices}: "))
-                if decision in choices:
-                    return decision
-                print(f"Opción inválida. Por favor elige entre {choices}")
-            except ValueError:
-                print("Entrada inválida. Debes ingresar un número.")
 
     def reset_decisions(self):
-        """Reinicia las decisiones para el siguiente escenario"""
         self.player_decision = None
         self.other_player_decision = None
 
-    def input_decision(self, is_player=True):
-        """Maneja la entrada del jugador con validación"""
-        if self.game_over:
-            return
-        
-        current = self.scenarios[self.current_scenario]
-        choices = current["choices"]
-        
-        if not choices:  # Escenario final
-            return
-        
-        decision = self._get_valid_decision(choices)
-        
-        if is_player:
-            self.player_decision = decision
-        else:
-            self.other_player_decision = decision
-
-    def get_game_state(self):
-        """Alias para compatibilidad (puedes eliminarlo si no se usa)"""
-        return self.get_state()
-
-    def set_state(self, state):
-        self.current_scenario = state["current_scenario"]
-        self.other_player_decision = state["player_decision"]  # Critical fix
-        self.game_over = state["game_over"]
-        self.game_result = state.get("game_result")
-
-    
+    def reset_game(self, restart):
+        if restart:
+            self.current_scenario = 0
+            self.game_over = False
+            self.game_result = None
+            self.reset_decisions()
+        self.restart = restart
