@@ -567,16 +567,13 @@ class Game:
 
     def get_state(self):
         return {
-            "current_scenario": self.current_scenario,
             "player_decision": self.player_decision,
-            "other_player_decision": self.other_player_decision,
             "game_over": self.game_over,
             "game_result": self.game_result,
             "restart": self.restart
         }
 
     def set_state(self, state):
-        self.current_scenario = state["current_scenario"]
         self.other_player_decision = state["player_decision"]
         self.game_over = state["game_over"]
         self.game_result = state["game_result"]
