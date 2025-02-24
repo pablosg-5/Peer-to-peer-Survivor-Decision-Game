@@ -1,13 +1,13 @@
 class Game:
     def __init__(self):
-        self.scenarios = [# NIVEL 0: INTRODUCCIÓN
+        self.scenarios = [  # NIVEL 0: INTRODUCCIÓN
             {
                 "scenario": "Tu barco ha sido sacudido por una tormenta y nadie ha sobrevivido, más que tú y tu compañero. Perdiste al resto de tus compañeros durante el incidente. Cuando recuperas el conocimiento, ambos están varados en la orilla de una isla desconocida. El sol se acerca al horizonte y la incertidumbre se cierne sobre ustedes. Tienen que actuar rápido: buscar comida (1) o buscar refugio (2).",
                 "choices": [1, 2]
             },
-# ------------------------------
-# NIVEL 1
-# ------------------------------
+            # ------------------------------
+            # NIVEL 1
+            # ------------------------------
 
             # NIVEL 1A: Ambos buscan comida - Viene de Nivel 0
             {
@@ -26,9 +26,9 @@ class Game:
                 "scenario": "Deciden buscar refugio juntos. Encuentran una cueva que parece ser segura, pero escuchan ruidos dentro. ¿Entrar a la cueva (1) o buscar otro lugar (2)?",
                 "choices": [1, 2]
             },
-# ------------------------------
-# NIVEL 2
-# ------------------------------
+            # ------------------------------
+            # NIVEL 2
+            # ------------------------------
 
             # NIVEL 2A: Comer los frutos - Viene de Nivel 1A y 1B
             {
@@ -71,9 +71,9 @@ class Game:
                 "scenario": "Al buscar otro lugar encuentran una especie de refugio abandonado. En él encuentran una radio que los ayuda a comunicar lo sucedido y ser rescatados. Final del juego 4",
                 "choices": []
             },
-# ------------------------------
-# NIVEL 3
-# ------------------------------
+            # ------------------------------
+            # NIVEL 3
+            # ------------------------------
 
             # NIVEL 3A: Buscar ayuda - Viene de Nivel 2A
             {
@@ -128,9 +128,9 @@ class Game:
                 "choices": []
             },
 
-# ------------------------------
-# NIVEL 4
-# ------------------------------
+            # ------------------------------
+            # NIVEL 4
+            # ------------------------------
 
             # NIVEL 4A: Salir del pozo - Viene de Nivel 3C
             {
@@ -186,9 +186,9 @@ class Game:
                 "choices": []
             },
 
-# ------------------------------
-# NIVEL 5
-# ------------------------------
+            # ------------------------------
+            # NIVEL 5
+            # ------------------------------
 
             # NIVEL 5A: Muerte por veneno - Viene de Nivel 4A
             {
@@ -226,9 +226,9 @@ class Game:
                 "choices": []
             },
 
-# ------------------------------
-# NIVEL 6
-# ------------------------------
+            # ------------------------------
+            # NIVEL 6
+            # ------------------------------
 
             # NIVEL 6A: Aceptar trato de la entidad - Viene de Nivel 5D
             {
@@ -260,9 +260,9 @@ class Game:
                 "choices": []
             },
 
-# ------------------------------
-# NIVEL 7
-# ------------------------------
+            # ------------------------------
+            # NIVEL 7
+            # ------------------------------
 
             # NIVEL 7A: Aceptar trato de la voz - Viene de Nivel 6C
             {
@@ -300,9 +300,9 @@ class Game:
                 "choices": []
             },
 
-# ------------------------------
-# NIVEL 8
-# ------------------------------
+            # ------------------------------
+            # NIVEL 8
+            # ------------------------------
 
             # NIVEL 8A: Quedarse cerca del manantial - Viene de Nivel 7D
             {
@@ -316,9 +316,9 @@ class Game:
                 "choices": []
             },
 
-# ------------------------------
-# NIVEL 9
-# ------------------------------
+            # ------------------------------
+            # NIVEL 9
+            # ------------------------------
 
             # NIVEL 9A: Buscar comida - Viene de Nivel 8A
             {
@@ -338,9 +338,9 @@ class Game:
                 "choices": []
             },
 
-# ------------------------------
-# NIVEL 10
-# ------------------------------
+            # ------------------------------
+            # NIVEL 10
+            # ------------------------------
 
             # NIVEL 10A: Alucinaciones mortales - Viene de Nivel 9A
             {
@@ -373,13 +373,13 @@ class Game:
             },
             # Escenario 10F: Ambos elijen regresar al refugio - Viene de 9B
             {
-                "scenario": "Deciden quedarse en la playa y construir una vida en la isla. Con el tiempo, aprenden a sobrevivir y encuentran paz en su nuevo hogar. Final del juego 18",                
+                "scenario": "Deciden quedarse en la playa y construir una vida en la isla. Con el tiempo, aprenden a sobrevivir y encuentran paz en su nuevo hogar. Final del juego 18",
                 "choices": []
             },
 
-# ------------------------------
-# NIVEL 11
-# ------------------------------
+            # ------------------------------
+            # NIVEL 11
+            # ------------------------------
 
             # NIVEL 11A: Tocar el altar - Viene de Nivel 10D
             {
@@ -393,9 +393,9 @@ class Game:
                 "choices": []
             },
 
-# ------------------------------
-# NIVEL 12
-# ------------------------------
+            # ------------------------------
+            # NIVEL 12
+            # ------------------------------
 
             # NIVEL 12A: Conocimiento infinito - Viene de Nivel 11A
             {
@@ -415,9 +415,9 @@ class Game:
                 "choices": []
             },
 
-# ------------------------------
-# NIVEL 13
-# ------------------------------
+            # ------------------------------
+            # NIVEL 13
+            # ------------------------------
 
             # NIVEL 13A: Inmortalidad cósmica - Viene de Nivel 12A
             {
@@ -437,9 +437,9 @@ class Game:
                 "choices": []
             },
 
-# ------------------------------
-# NIVEL 14
-# ------------------------------
+            # ------------------------------
+            # NIVEL 14
+            # ------------------------------
 
             # NIVEL 14A: Desierto árido - Viene de Nivel 13B
             {
@@ -458,8 +458,9 @@ class Game:
                 "scenario": "Al no ponerse de acuerdo, son sepultados por las piedras que van cayendo, dejando sus cuerpos sellados con la cueva. Final del juego 41",
                 "choices": []
             }
-        ] 
-        self.transitions = {           
+        ]
+
+        self.transitions = {
             # NIVEL 0
             0: {
                 (1, 1): 1, (2, 2): 3, (1, 2): 2, (2, 1): 2
@@ -556,38 +557,13 @@ class Game:
             63: {
                 (1, 1): 69, (2, 2): 70, (1, 2): 71, (2, 1): 71
             }}
+
         self.current_scenario = 0
         self.player_decision = None
         self.other_player_decision = None
         self.game_over = False
-        self.game_result = None
+        self.game_result = ""
         self.restart = False
-
-    def process_decisions(self):
-        if self.game_over:
-            return
-
-        current = self.scenarios[self.current_scenario]
-        if not current["choices"]:
-            self.game_over = True
-            self.game_result = current["scenario"]
-            return
-
-        key = (self.player_decision, self.other_player_decision)
-        transitions = self.transitions.get(self.current_scenario, {})
-        next_scenario = transitions.get(key, -1)
-
-        if next_scenario == -1 or not (0 <= next_scenario < len(self.scenarios)):
-            self.game_over = True
-            self.game_result = "Error: Transición inválida"
-            return
-
-        self.current_scenario = next_scenario
-        new_scenario = self.scenarios[next_scenario]
-        
-        if not new_scenario["choices"]:
-            self.game_over = True
-            self.game_result = new_scenario["scenario"]
 
     def get_state(self):
         return {
@@ -601,22 +577,34 @@ class Game:
 
     def set_state(self, state):
         self.current_scenario = state["current_scenario"]
-        self.other_player_decision = state.get("other_player_decision", None)
+        self.other_player_decision = state["player_decision"]
         self.game_over = state["game_over"]
-        self.game_result = state.get("game_result")
+        self.game_result = state["game_result"]
         self.restart = state.get("restart", False)
 
     def get_scenario(self):
-        if self.game_over:
-            return {
-                "scenario": self.game_result,
-                "choices": [],
-                "current_scenario": self.current_scenario
-            }
-        return {
-            **self.scenarios[self.current_scenario],
-            "current_scenario": self.current_scenario
-        }
+        return self.scenarios[self.current_scenario]
+
+    def process_decisions(self):
+        if self.player_decision and self.other_player_decision:
+            # Ordenar decisiones para coincidir con las transiciones
+            decisions = tuple(
+                sorted([self.player_decision, self.other_player_decision]))
+
+            # Obtener transición actual
+            current_transitions = self.transitions.get(
+                self.current_scenario, {})
+            next_scenario = current_transitions.get(decisions, None)
+
+            if next_scenario is not None:
+                self.current_scenario = next_scenario
+                # Verificar si el nuevo escenario tiene opciones
+                if not self.scenarios[self.current_scenario]["choices"]:
+                    self.game_over = True
+            else:
+                # Transición no definida, fin del juego
+                self.game_over = True
+                self.game_result = "Decisión inválida - Juego terminado"
 
     def reset_decisions(self):
         self.player_decision = None
@@ -625,7 +613,10 @@ class Game:
     def reset_game(self, restart):
         if restart:
             self.current_scenario = 0
+            self.player_decision = None
+            self.other_player_decision = None
             self.game_over = False
-            self.game_result = None
-            self.reset_decisions()
-        self.restart = restart
+            self.game_result = ""
+            self.restart = True
+        else:
+            self.restart = False
