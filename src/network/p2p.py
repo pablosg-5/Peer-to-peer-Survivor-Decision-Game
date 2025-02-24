@@ -143,36 +143,47 @@ def start_p2p(host, port, peer_host=None, peer_port=None):
 
                 print("\nEsperando decisión del compañero...")
             
-            start_wait = time.time()
-            while game.other_player_decision is None and sync_active:
-                if time.time() - start_wait > 30:
-                    print("\nTiempo de espera agotado!")
-                    sync_active = False
+                # Nueva condición de espera activa
+                start_wait = time.time()
+                while True:
+                    with lock:
+                        if game.other_player_decision is not None:
+                            break
+                        if time.time() - start_wait > 30:
+                            print("\nTiempo de espera agotado!")
+                            sync_active = False
+                            break
+                    time.sleep(0.1)
+
+                if not sync_active:
                     break
-                time.sleep(0.1)
 
-            if not sync_active:
+                # Procesamiento conjunto sincronizado
+                with lock:
+                    prev_scenario = game.current_scenario
+                    game.process_decisions()
+                    
+                    # Forzar sincronización del nuevo estado
+                    current_state = game.get_state()
+                    if connection:
+                        data = json.dumps(current_state).encode('utf-8')
+                        msg_len = len(data).to_bytes(4, byteorder='big')
+                        connection.sendall(msg_len + data)
+                    
+                    print(f"\nEstado actualizado - Escenario: {game.current_scenario}")
+                    
+                    # Resetear solo si hay nuevo escenario con opciones
+                    if game.current_scenario != prev_scenario and scenario["choices"]:
+                        game.reset_decisions()
+                        scenario_processed = True
+
+                input("\nPresiona Enter para continuar...")
+                scenario_processed = False
+            else:
+                print("\n" + "="*50)
+                print("JUEGO TERMINADO - Resultado final:")
+                print(game.game_result)
                 break
-
-            print("\n" + "="*50)
-            print(f"Tu elección: {game.player_decision}")
-            print(f"Decisión del compañero: {game.other_player_decision}")
-
-            with lock:
-                # Añadir este print para debug
-                print(f"Procesando decisiones - Escenario actual ANTES: {game.current_scenario}")
-                game.process_decisions()
-                print(f"Procesando decisiones - Escenario actual DESPUÉS: {game.current_scenario}")
-                game.reset_decisions()
-                scenario_processed = True
-
-            input("\nPresiona Enter para continuar...")
-            scenario_processed = False
-        else:
-            print("\n" + "="*50)
-            print("JUEGO TERMINADO - Resultado final:")
-            print(game.game_result)
-            break
 
         restart = input("\n¿Jugar de nuevo? (s/n): ").lower()
         game.reset_game(restart == 's')
