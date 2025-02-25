@@ -565,6 +565,10 @@ class Game:
         self.game_result = ""
         self.restart = False
 
+    # ¡Este método es crítico y estaba faltante!
+    def get_scenario(self):
+        return self.scenarios[self.current_scenario]
+
     def get_state(self):
         return {
             "current_scenario": self.current_scenario,  # ¡Fundamental incluir esto!
