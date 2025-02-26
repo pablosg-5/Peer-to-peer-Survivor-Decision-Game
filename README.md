@@ -34,47 +34,56 @@ cd Peer-to-peer-Survivor-Decision-Game/src
 
 # Install dependencies
 pip install -r requirements.txt
+```
 
 
 ### Game Flow
-    Initial Setup
+Initial Setup
 
-    Both players will see the connection status:
+Both players will see the connection status:
+```bash
+Waiting for connection on localhost:5000...
+Connected to peer at 127.0.0.1:5001
+```
+Scenario Presentation
 
-    Waiting for connection on localhost:5000...
-    Connected to peer at 127.0.0.1:5001
-    Scenario Presentation
+The game will display the current scenario:
+```bash
+==================================================
+Your ship has been wrecked by a storm...
+You must act fast: search for food (1) or look for shelter (2).
+==================================================
+```
 
-    The game will display the current scenario:
+Making Decisions
 
-    ==================================================
-    Your ship has been wrecked by a storm...
-    You must act fast: search for food (1) or look for shelter (2).
-    ==================================================
-    Making Decisions
+Each player will be prompted:
+```bash
+Your decision (1/2): 
+```
+Enter your choice (1 or 2) and press Enter.
 
-    Each player will be prompted:
 
-    Your decision (1/2): 
-    Enter your choice (1 or 2) and press Enter.
+Waiting for Peer
 
-    Waiting for Peer
+After submitting your choice, the game will wait for the other player:
+```bash
+Waiting for the other player's decision...
+```
+Outcome Display
 
-    After submitting your choice, the game will wait for the other player:
+Once both players have made their choices, the result is shown:
+```bash
+==================================================
+Your choice: 1
+Other player's choice: 2
+==================================================
+```
 
-    Waiting for the other player's decision...
-    Outcome Display
+The game will then display the outcome of the combined decisions.
 
-    Once both players have made their choices, the result is shown:
+Progression
 
-    ==================================================
-    Your choice: 1
-    Other player's choice: 2
-    ==================================================
-    The game will then display the outcome of the combined decisions.
-
-    Progression
-
-    The game will automatically advance to the next scenario based on the players' choices.
+The game will automatically advance to the next scenario based on the players' choices.
 
 ### ENJOY THE 41 DIFFERENTS ENDINGS
