@@ -1,4 +1,3 @@
-import sys
 from network.p2p import start_p2p
 
 def main():

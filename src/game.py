@@ -1,577 +1,507 @@
 class Game:
     def __init__(self):
-        self.scenarios = [  # NIVEL 0: INTRODUCCIÓN
+        # Scenario database containing all game paths and endings
+
+        self.scenarios = [
+            # LEVEL 0: INTRODUCTION
             {
-                "scenario": "Tu barco ha sido sacudido por una tormenta y nadie ha sobrevivido, más que tú y tu compañero. Perdiste al resto de tus compañeros durante el incidente. Cuando recuperas el conocimiento, ambos están varados en la orilla de una isla desconocida. El sol se acerca al horizonte y la incertidumbre se cierne sobre ustedes. Tienen que actuar rápido: buscar comida (1) o buscar refugio (2).",
+                "scenario": "Your ship has been hit by a storm and no one has survived, except for you and your companion. You lost the rest of your companions during the incident. When you regain consciousness, both of you are stranded on the shore of an unknown island. The sun is approaching the horizon and uncertainty looms over you. You have to act quickly: search for food (1) or look for shelter (2).",
                 "choices": [1, 2]
             },
             # ------------------------------
-            # NIVEL 1
+            # LEVEL 1
             # ------------------------------
-
-            # NIVEL 1A: Ambos buscan comida - Viene de Nivel 0
+            # LEVEL 1A: Both look for food - Coming from #Level 0
             {
-                "scenario": "Deciden buscar comida juntos. Encuentran algunos frutos en los árboles cercanos, pero algunos parecen venenosos. ¿Comer los frutos (1) o buscar otra fuente de alimento (2)?",
+                "scenario": "You decide to look for food together. You find some fruits in nearby trees, but some look poisonous. Eat the fruits (1) or look for another food source (2)?",
                 "choices": [1, 2]
             },
-
-            # NIVEL 1B: Uno busca comida, otro refugio - Viene de Nivel 0
+            # LEVEL 1B: One looks for food, the other for shelter - Coming from #Level 0
             {
-                "scenario": "Uno de ustedes busca comida, mientras el otro busca refugio. El que busca comida encuentra frutos sospechosos, mientras que el otro descubre una cueva con señales de peligro. ¿Deciden comer los frutos (1) o explorar la cueva (2)?",
+                "scenario": "One of you looks for food, while the other looks for shelter. The one looking for food finds suspicious fruits, while the other discovers a cave with danger signs. Do you decide to eat the fruits (1) or explore the cave (2)?",
                 "choices": [1, 2]
             },
-
-            # NIVEL 1C: Ambos buscan refugio - Viene de Nivel 0
+            # LEVEL 1C: Both look for shelter - Coming from #Level 0
             {
-                "scenario": "Deciden buscar refugio juntos. Encuentran una cueva que parece ser segura, pero escuchan ruidos dentro. ¿Entrar a la cueva (1) o buscar otro lugar (2)?",
+                "scenario": "You decide to look for shelter together. You find a cave that seems safe, but you hear noises inside. Enter the cave (1) or look for another place (2)?",
                 "choices": [1, 2]
             },
             # ------------------------------
-            # NIVEL 2
+            # LEVEL 2
             # ------------------------------
-
-            # NIVEL 2A: Comer los frutos - Viene de Nivel 1A y 1B
+            # LEVEL 2A: Eat the fruits - Coming from #Level 1A and 1B
             {
-                "scenario": "Comen los frutos. Uno de ellos resulta ser venenoso y tu compañero comienza a sentirse mal. ¿Buscar ayuda en la isla (1) o intentar encontrar un antídoto en la naturaleza (2)?",
+                "scenario": "You eat the fruits. One of them turns out to be poisonous and your companion begins to feel ill. Look for help on the island (1) or try to find an antidote in nature (2)?",
                 "choices": [1, 2]
             },
-
-            # NIVEL 2B: Muerte por envenenamiento - Viene de Nivel 1A
+            # LEVEL 2B: Death by poisoning - Coming from #Level 1A
             {
-                "scenario": "Algunos frutos resultan ser venenosos. Al ingerirlos quedas envenenado e incapaz de hacer nada. Al intentar buscar otra fuente de alimentos no te das cuenta de que tu compañero está en grave estado, por lo que muere solo. Al seguir buscando alimento caes por un barranco sin darte cuenta y mueres. Final del juego 1",
-                "choices": []
+                "scenario": "Some fruits turn out to be poisonous. Upon ingesting them, you become poisoned and unable to do anything. While trying to find another food source, you don't realize that your companion is in serious condition, so they die alone. As you continue looking for food, you fall off a cliff without noticing and die. End of game 1",
+                "choices": ["end_game"]
             },
-
-            # NIVEL 2C: Buscar otra fuente de alimento - Viene de Nivel 1A
+            # LEVEL 2C: Look for another food source - Coming from #Level 1A
             {
-                "scenario": "Deciden buscar otra fuente de alimento. Encuentran un río con peces, pero no tienen herramientas para pescar. ¿Intentar pescar con las manos (1) o seguir buscando (2)?",
+                "scenario": "You decide to look for another food source. You find a river with fish, but you don't have tools to fish. Try fishing with your hands (1) or keep looking (2)?",
                 "choices": [1, 2]
             },
-
-            # NIVEL 2D: Entrar a la cueva - Viene de Nivel 1B y 1C
+            # LEVEL 2D: Enter the cave - Coming from #Level 1B and 1C
             {
-                "scenario": "Entran a la cueva y descubren que está habitada por un oso. El oso los ataca. ¿Intentar defenderse (1) o huir (2)?",
+                "scenario": "You enter the cave and discover it's inhabited by a bear. The bear attacks you. Try to defend yourselves (1) or flee (2)?",
                 "choices": [1, 2]
             },
-
-            # NIVEL 2E: Muerte por separación - Viene de Nivel 1C
+            # LEVEL 2E: Death by separation - Coming from #Level 1C
             {
-                "scenario": "El que entra a la cueva es asesinado por un oso, mientras que el otro se pierde en el bosque y fallece en misteriosas condiciones. Final del juego 2",
-                "choices": []
+                "scenario": "The one who enters the cave is killed by a bear, while the other gets lost in the forest and dies under mysterious circumstances. End of game 2",
+                "choices": ["end_game"]
             },
-
-            # NIVEL 2F: Muerte dual - Viene de Nivel 1B
+            # LEVEL 2F: Dual death - Coming from #Level 1B
             {
-                "scenario": "El que entra a la cueva es asesinado por un oso, mientras que el que se come los frutos es envenenado de muerte. Final del juego 3",
-                "choices": []
+                "scenario": "The one who enters the cave is killed by a bear, while the one who eats the fruits is fatally poisoned. End of game 3",
+                "choices": ["end_game"]
             },
-
-            # NIVEL 2G: Rescate por radio - Viene de Nivel 1C
+            # LEVEL 2G: Radio rescue - Coming from #Level 1C
             {
-                "scenario": "Al buscar otro lugar encuentran una especie de refugio abandonado. En él encuentran una radio que los ayuda a comunicar lo sucedido y ser rescatados. Final del juego 4",
-                "choices": []
+                "scenario": "While looking for another place, you find a kind of abandoned shelter. In it, you find a radio that helps you communicate what happened and be rescued. End of game 4",
+                "choices": ["end_game"]
             },
             # ------------------------------
-            # NIVEL 3
+            # LEVEL 3
             # ------------------------------
-
-            # NIVEL 3A: Buscar ayuda - Viene de Nivel 2A
+            # LEVEL 3A: Look for help - Coming from #Level 2A
             {
-                "scenario": "Ambos deciden buscar ayuda en la isla. Después de caminar un rato, encuentran una choza de un hombre solitario. El hombre les ofrece medicina para el veneno, pero les advierte que tiene un precio. ¿Aceptar la oferta del hombre y ayudarle a recolectar hierbas en un pantano peligroso (1) o rechazar la oferta y seguir buscando una forma alternativa de curarse (2)?",
+                "scenario": "Both decide to look for help on the island. After walking for a while, you find a hut of a solitary man. The man offers medicine for the poison, but warns you that it has a price. Accept the man's offer and help him collect herbs in a dangerous swamp (1) or reject the offer and continue looking for an alternative way to heal (2)?",
                 "choices": [1, 2]
             },
-
-            # NIVEL 3B: Muerte por barranco - Viene de Nivel 2A
+            # LEVEL 3B: Death by cliff - Coming from #Level 2A
             {
-                "scenario": "Al intentar buscar ayuda, se pierde en la jungla y desaparece para siempre. El que buscaba un antídoto natural cae por un barranco sin darse cuenta y muere. Final del juego 5",
-                "choices": []
+                "scenario": "While trying to find help, you get lost in the jungle and disappear forever. The one looking for a natural antidote falls off a cliff without noticing and dies. End of game 5",
+                "choices": ["end_game"]
             },
-
-            # NIVEL 3C: Buscar antídoto - Viene de Nivel 2A
+            # LEVEL 3C: Look for antidote - Coming from #Level 2A
             {
-                "scenario": "Ambos se adentran en el bosque buscando plantas curativas. Tras varias horas de búsqueda, uno de los personajes cae en un pozo venenoso y el veneno se propaga rápidamente. ¿Intentar salir del pozo a toda prisa, incluso si eso pone en riesgo tu vida (1) o quedarte en el pozo, esperando encontrar una salida más segura mientras los efectos del veneno avanzan (2)?",
+                "scenario": "Both of you venture into the forest looking for healing plants. After several hours of searching, one of the characters falls into a poisonous pit and the poison spreads quickly. Try to get out of the pit in a hurry, even if it puts your life at risk (1) or stay in the pit, hoping to find a safer exit while the effects of the poison advance (2)?",
                 "choices": [1, 2]
             },
-            # NIVEL 3D: Pescar con las manos - Viene de Nivel 2C
+            # LEVEL 3D: Fish with hands - Coming from #Level 2C
             {
-                "scenario": "Intentan pescar con las manos, pero los peces son demasiado rápidos. Después de varios intentos fallidos, uno de ustedes encuentra una lanza improvisada en la orilla. ¿Intentar pescar con la lanza (1) o seguir buscando otra fuente de alimento (2)?",
+                "scenario": "You try to fish with your hands, but the fish are too fast. After several failed attempts, one of you finds an improvised spear on the shore. Try fishing with the spear (1) or continue looking for another food source (2)?",
                 "choices": [1, 2]
             },
-
-            # NIVEL 3E: Muerte por discusión - Viene de Nivel 2C
+            # LEVEL 3E: Death by discussion - Coming from #Level 2C
             {
-                "scenario": "Mientras discuten sobre qué hacer, son atacados por un oso que los mata. Final del juego 6",
-                "choices": []
+                "scenario": "While discussing what to do, you are attacked by a bear that kills you. End of game 6",
+                "choices": ["end_game"]
             },
-
-            # NIVEL 3F: Muerte por trampa natural - Viene de Nivel 2C
+            # LEVEL 3F: Death by natural trap - Coming from #Level 2C
             {
-                "scenario": "Ambos caen en una trampa natural mientras exploran y mueren. Final del juego 7",
-                "choices": []
+                "scenario": "Both fall into a natural trap while exploring and die. End of game 7",
+                "choices": ["end_game"]
             },
-
-            # NIVEL 3G: Defensa exitosa - Viene de Nivel 2D
+            # LEVEL 3G: Successful defense - Coming from #Level 2D
             {
-                "scenario": "Deciden enfrentar al oso con ramas y piedras. La criatura se muestra agresiva, pero con esfuerzo logran ahuyentarlo. Esto les permite encontrar en la cueva una pistola de bengalas que les ayuda a ser rescatados en la playa por un barco. Final del juego 8",
-                "choices": []
+                "scenario": "You decide to face the bear with branches and stones. The creature shows aggression, but with effort you manage to scare it away. This allows you to find a flare gun in the cave that helps you get rescued on the beach by a ship. End of game 8",
+                "choices": ["end_game"]
             },
-
-            # NIVEL 3H: Muerte por huida - Viene de Nivel 2D
+            # LEVEL 3H: Death by fleeing - Coming from #Level 2D
             {
-                "scenario": "Intentan huir del oso, pero son alcanzados y asesinados brutalmente. Final del juego 9",
-                "choices": []
+                "scenario": "You try to flee from the bear, but are caught and brutally killed. End of game 9",
+                "choices": ["end_game"]
             },
-
-            # NIVEL 3I: Muerte por separación - Viene de Nivel 2D
+            # LEVEL 3I: Death by separation - Coming from #Level 2D
             {
-                "scenario": "Al intentar uno defenderse solo, es asesinado por el oso. El otro, al intentar huir, se tropieza con un hoyo y muere debido al golpe en la cabeza. Final del juego 10",
-                "choices": []
+                "scenario": "While one tries to defend himself alone, he is killed by the bear. The other, while trying to flee, trips over a hole and dies due to the blow to the head. End of game 10",
+                "choices": ["end_game"]
             },
-
             # ------------------------------
-            # NIVEL 4
+            # LEVEL 4
             # ------------------------------
-
-            # NIVEL 4A: Salir del pozo - Viene de Nivel 3C
+            # LEVEL 4A: Get out of the pit - Coming from #Level 3C
             {
-                "scenario": "Consiguen salir del pozo juntos, pero uno ya se encuentra infectado. ¿Intentar quemar madera y hacer señales en la playa para ser salvados rápidamente (1) o priorizar construir un refugio (2)?",
+                "scenario": "You manage to get out of the pit together, but one is already infected. Try to burn wood and make signals on the beach to be quickly saved (1) or prioritize building a shelter (2)?",
                 "choices": [1, 2]
             },
-
-            # NIVEL 4B: Quedarse en el pozo - Viene de Nivel 3C
+            # LEVEL 4B: Stay in the pit - Coming from #Level 3C
             {
-                "scenario": "Se quedan en el pozo y descubren un pasadizo oculto con símbolos antiguos. ¿Explorar el pasadizo (1) o ignorarlo y esperar ayuda (2)?",
+                "scenario": "You stay in the pit and discover a hidden passage with ancient symbols. Explore the passage (1) or ignore it and wait for help (2)?",
                 "choices": [1, 2]
             },
-
-            # NIVEL 4C: Muerte por opciones distintas - Viene de Nivel 3C
+            # LEVEL 4C: Death by different options - Coming from #Level 3C
             {
-                "scenario": "Al salir del pozo solo, muere al no poder sobrevivir solo en la isla. El que intenta encontrar una salida más segura, muere afectado por el veneno. Final del juego 11",
-                "choices": []
+                "scenario": "By getting out of the pit alone, you die from not being able to survive alone on the island. The one trying to find a safer exit dies affected by the poison. End of game 11",
+                "choices": ["end_game"]
             },
-
-            # NIVEL 4D: Muerte en el pantano - Viene de Nivel 3A
+            # LEVEL 4D: Death in the swamp - Coming from #Level 3A
             {
-                "scenario": "Ambos mueren en el pantano debido a las criaturas que lo habitan y a la falta de conocimiento de la zona. Final del juego 12",
-                "choices": []
+                "scenario": "Both die in the swamp due to the creatures that inhabit it and the lack of knowledge of the area. End of game 12",
+                "choices": ["end_game"]
             },
-
-            # NIVEL 4E: Muerte por veneno - Viene de Nivel 3A
+            # LEVEL 4E: Death by poison - Coming from #Level 3A
             {
-                "scenario": "Al rechazar la oferta del hombre, deciden seguir buscando una forma alternativa de curarse. Sin embargo, el veneno se propaga rápidamente y ambos mueren al amanecer. Final del juego 13",
-                "choices": []
+                "scenario": "By rejecting the man's offer, you decide to continue looking for an alternative way to heal. However, the poison spreads quickly and both die at dawn. End of game 13",
+                "choices": ["end_game"]
             },
-
-            # NIVEL 4F: Muerte por separación - Viene de Nivel 3A
+            # LEVEL 4F: Death by separation - Coming from #Level 3A
             {
-                "scenario": "Al decidir separarse, uno de ustedes cae en una trampa natural y muere en el acto, mientras que el otro, al no conseguir antídoto, muere debido al veneno. Final del juego 14",
-                "choices": []
+                "scenario": "By deciding to separate, one of you falls into a natural trap and dies immediately, while the other, not getting an antidote, dies due to the poison. End of game 14",
+                "choices": ["end_game"]
             },
-
-            # NIVEL 4G: Adaptación a la isla - Viene de Nivel 3D
+            # LEVEL 4G: Adaptation to the island - Coming from #Level 3D
             {
-                "scenario": "Consiguen pescar un pez grande y lo cocinan en una fogata improvisada. El alimento les da energía para explorar la isla. Algo que les hace acabar adaptándose a la isla y, debido a la imposibilidad de lograr ser rescatados, acaban quedándose a vivir. Final del juego 15",
-                "choices": []
+                "scenario": "You manage to catch a big fish and cook it on an improvised fire. The food gives you energy to explore the island. This makes you end up adapting to the island and, due to the impossibility of being rescued, you end up staying to live. End of game 15",
+                "choices": ["end_game"]
             },
-
-            # NIVEL 4H: Muerte en la jungla - Viene de Nivel 3D
+            # LEVEL 4H: Death in the jungle - Coming from #Level 3D
             {
-                "scenario": "Al separar vuestros caminos, uno desaparece en extrañas condiciones en la jungla y el otro es atacado por un oso en el bosque, llevando a su muerte. Final del juego 16",
-                "choices": []
+                "scenario": "By separating your paths, one disappears under strange circumstances in the jungle and the other is attacked by a bear in the forest, leading to his death. End of game 16",
+                "choices": ["end_game"]
             },
-            # Escenario 4I: Ambos eligen cosas distintas - Viene de 3D
+            # LEVEL 4I: Both choose different things - Coming from 3D
             {
-                "scenario": " Al separar vuestros caminos, uno desaparece en extrañas condiciones en la jungla y el otro es atacado por un oso en el bosque llevando a su muerte " +
-                "Final del juego 3",
-                "choices": []
+                "scenario": "By separating your paths, one disappears under strange circumstances in the jungle and the other is attacked by a bear in the forest leading to his death. End of game 3",
+                "choices": ["end_game"]
             },
-
             # ------------------------------
-            # NIVEL 5
+            # LEVEL 5
             # ------------------------------
-
-            # NIVEL 5A: Muerte por veneno - Viene de Nivel 4A
+            # LEVEL 5A: Death by poison - Coming from #Level 4A
             {
-                "scenario": "El veneno se propaga, y sin antídoto, ambos mueren al amanecer. Final del juego 17",
-                "choices": []
+                "scenario": "The poison spreads, and without an antidote, both die at dawn. End of game 17",
+                "choices": ["end_game"]
             },
-
-            # NIVEL 5B: Muerte por trampa - Viene de Nivel 4A
+            # LEVEL 5B: Death by trap - Coming from #Level 4A
             {
-                "scenario": "Uno cae en una trampa natural y muere en el acto, mientras que el otro, al no conseguir antídoto, muere debido al veneno. Final del juego 18",
-                "choices": []
+                "scenario": "One falls into a natural trap and dies immediately, while the other, not getting an antidote, dies due to the poison. End of game 18",
+                "choices": ["end_game"]
             },
-
-            # NIVEL 5C: Explorar ruinas - Viene de Nivel 4A
+            # LEVEL 5C: Explore ruins - Coming from #Level 4A
             {
-                "scenario": "Encuentran una cura natural en una planta y, mientras exploran la isla, descubren unas antiguas ruinas cubiertas de inscripciones extrañas. Una fuerza misteriosa parece emanar del lugar. ¿Explorar las ruinas (1) o alejarse y seguir buscando supervivencia (2)?",
+                "scenario": "You find a natural cure in a plant and, while exploring the island, you discover ancient ruins covered with strange inscriptions. A mysterious force seems to emanate from the place. Explore the ruins (1) or move away and continue looking for survival (2)?",
                 "choices": [1, 2]
             },
-
-            # NIVEL 5D: Explorar pasadizo - Viene de Nivel 4B
+            # LEVEL 5D: Explore passage - Coming from #Level 4B
             {
-                "scenario": "El pasadizo los lleva a un templo donde una entidad les ofrece inmortalidad... a cambio de sus almas. La entidad del templo exige un sacrificio. ¿Aceptar el trato (1) o rechazarlo y huir (2)?",
+                "scenario": "The passage leads you to a temple where an entity offers you immortality... in exchange for your souls. The temple entity demands a sacrifice. Accept the deal (1) or reject it and flee (2)?",
                 "choices": [1, 2]
             },
-
-            # NIVEL 5E: Muerte por espera - Viene de Nivel 4B
+            # LEVEL 5E: Death by waiting - Coming from #Level 4B
             {
-                "scenario": "Ambos mueren debido al veneno y a la espera. Final del juego 19",
-                "choices": []
+                "scenario": "Both die due to the poison and the wait. End of game 19",
+                "choices": ["end_game"]
             },
-
-            # NIVEL 5F: Muerte en el pasadizo - Viene de Nivel 4B
+            # LEVEL 5F: Death in the passage - Coming from #Level 4B
             {
-                "scenario": "Uno muere debido al veneno y a la espera, el otro muere en extrañas condiciones al comenzar a adentrarse al pasadizo. Final del juego 20",
-                "choices": []
+                "scenario": "One dies due to the poison and the wait, the other dies under strange circumstances when starting to enter the passage. End of game 20",
+                "choices": ["end_game"]
             },
-
             # ------------------------------
-            # NIVEL 6
+            # LEVEL 6
             # ------------------------------
-
-            # NIVEL 6A: Aceptar trato de la entidad - Viene de Nivel 5D
+            # LEVEL 6A: Accept entity's deal - Coming from #Level 5D
             {
-                "scenario": "Uno de ustedes muere, pero el otro obtiene poderes sobrenaturales... y una maldición eterna que le hará vagar por la isla como un fantasma eternamente. Final del juego 21",
-                "choices": []
+                "scenario": "One of you dies, but the other gets supernatural powers... and an eternal curse that will make him wander the island as a ghost forever. End of game 21",
+                "choices": ["end_game"]
             },
-
-            # NIVEL 6B: Rechazar trato de la entidad - Viene de Nivel 5D
+            # LEVEL 6B: Reject entity's deal - Coming from #Level 5D
             {
-                "scenario": "La entidad se enfada por perturbar su gran letargo y huir, y los convierte en jabalíes salvajes de la isla sin recuerdos. Final del juego 22",
-                "choices": []
+                "scenario": "The entity gets angry for disturbing its great lethargy and fleeing, and turns you into wild boars of the island with no memories. End of game 22",
+                "choices": ["end_game"]
             },
-
-            # NIVEL 6C: Explorar ruinas - Viene de Nivel 5C
+            # LEVEL 6C: Explore ruins - Coming from #Level 5C
             {
-                "scenario": "Al explorar las ruinas, una voz surge en sus mentes, ofreciendo conocimiento prohibido a cambio de permanecer en la isla. Sienten un poder oscuro envolviéndolos. ¿Aceptar el trato (1) o rechazarlo y huir (2)?",
+                "scenario": "While exploring the ruins, a voice arises in your minds, offering forbidden knowledge in exchange for staying on the island. You feel a dark power enveloping you. Accept the deal (1) or reject it and flee (2)?",
                 "choices": [1, 2]
             },
-
-            # NIVEL 6D: Seguir explorando - Viene de Nivel 5C
+            # LEVEL 6D: Continue exploring - Coming from #Level 5C
             {
-                "scenario": "Deciden seguir explorando. Encuentran un sendero que parece llevar a una zona más alta de la isla. ¿Seguir el sendero (1) o regresar al refugio (2)?",
+                "scenario": "You decide to continue exploring. You find a path that seems to lead to a higher area of the island. Follow the path (1) or return to the shelter (2)?",
                 "choices": [1, 2]
             },
-
-            # NIVEL 6E: Muerte en las ruinas - Viene de Nivel 5C
+            # LEVEL 6E: Death in the ruins - Coming from #Level 5C
             {
-                "scenario": "Al separar vuestros caminos, uno desaparece en extrañas condiciones en las ruinas y el otro es atacado por un oso en el bosque, llevando a su muerte. Final del juego 23",
-                "choices": []
+                "scenario": "By separating your paths, one disappears under strange circumstances in the ruins and the other is attacked by a bear in the forest, leading to his death. End of game 23",
+                "choices": ["end_game"]
             },
-
             # ------------------------------
-            # NIVEL 7
+            # LEVEL 7
             # ------------------------------
-
-            # NIVEL 7A: Aceptar trato de la voz - Viene de Nivel 6C
+            # LEVEL 7A: Accept voice's deal - Coming from #Level 6C
             {
-                "scenario": "Se convierten en guardianes de la isla con todos los conocimientos y secretos de esta. Por tanto, aprenden a vivir en la isla y quedarse para siempre. Final del juego 24",
-                "choices": []
+                "scenario": "You become guardians of the island with all the knowledge and secrets of it. Therefore, you learn to live on the island and stay forever. End of game 24",
+                "choices": ["end_game"]
             },
-
-            # NIVEL 7B: Rechazar trato de la voz - Viene de Nivel 6C
+            # LEVEL 7B: Reject voice's deal - Coming from #Level 6C
             {
-                "scenario": "Al rechazar el trato, ambos sufren una muerte súbita para poder proteger los secretos de la isla. Final del juego 25",
-                "choices": []
+                "scenario": "By rejecting the deal, both suffer a sudden death to protect the secrets of the island. End of game 25",
+                "choices": ["end_game"]
             },
-
-            # NIVEL 7C: Traición del guardián - Viene de Nivel 6C
+            # LEVEL 7C: Guardian's betrayal - Coming from #Level 6C
             {
-                "scenario": "Al aceptar el trato solo uno, se convierte en el guardián de la isla y asesina a su compañero para proteger los secretos de esta. Final del juego 26",
-                "choices": []
+                "scenario": "By only one accepting the deal, he becomes the guardian of the island and murders his companion to protect its secrets. End of game 26",
+                "choices": ["end_game"]
             },
-
-            # NIVEL 7D: Seguir el sendero - Viene de Nivel 6D
+            # LEVEL 7D: Follow the path - Coming from #Level 6D
             {
-                "scenario": "Deciden seguir el sendero y encuentran un manantial de agua fresca. ¿Quedarse cerca del manantial (1) o seguir explorando (2)?",
+                "scenario": "You decide to follow the path and find a fresh water spring. Stay near the spring (1) or continue exploring (2)?",
                 "choices": [1, 2]
             },
-
-            # NIVEL 7E: Regresar al refugio - Viene de Nivel 6D
+            # LEVEL 7E: Return to shelter - Coming from #Level 6D
             {
-                "scenario": "Regresan al refugio y deciden mejorar su estructura. Con el tiempo, se sienten más seguros. Acaban optando por quedarse a vivir en la isla. Final del juego 27",
-                "choices": []
+                "scenario": "You return to the shelter and decide to improve its structure. Over time, you feel safer. You end up choosing to stay and live on the island. End of game 27",
+                "choices": ["end_game"]
             },
-
-            # NIVEL 7F: Explorar y adaptarse - Viene de Nivel 6D
+            # LEVEL 7F: Explore and adapt - Coming from #Level 6D
             {
-                "scenario": "Al separar vuestros caminos, uno refuerza mejor el refugio, llegando a adaptarse a este y a la isla y quedándose a vivir para siempre. El que decide explorar logra encontrar un barco que lo ayuda a salir de la isla y ser rescatado en alta mar semanas después. Final del juego 28",
-                "choices": []
+                "scenario": "By separating your paths, one better reinforces the shelter, adapting to it and the island and staying to live forever. The one who decides to explore manages to find a boat that helps him leave the island and be rescued at sea weeks later. End of game 28",
+                "choices": ["end_game"]
             },
-
             # ------------------------------
-            # NIVEL 8
+            # LEVEL 8
             # ------------------------------
-
-            # NIVEL 8A: Quedarse cerca del manantial - Viene de Nivel 7D
+            # LEVEL 8A: Stay near the spring - Coming from #Level 7D
             {
-                "scenario": "Se quedan cerca del manantial y construyen un refugio temporal. El agua fresca les da energía, pero la comida sigue siendo escasa. ¿Buscar comida en los alrededores (1) o intentar pescar (2)?",
+                "scenario": "You stay near the spring and build a temporary shelter. The fresh water gives you energy, but food is still scarce. Look for food in the surroundings (1) or try to fish (2)?",
                 "choices": [1, 2]
             },
-
-            # NIVEL 8B: Rescate final - Viene de Nivel 7D
+            # LEVEL 8B: Final rescue - Coming from #Level 7D
             {
-                "scenario": "Al seguir explorando, encontráis un barco varado en otra playa. Después de varios intentos, logran zarpar y ser rescatados a las pocas semanas en alta mar. Final del juego 29",
-                "choices": []
+                "scenario": "As you continue exploring, you find a stranded boat on another beach. After several attempts, you manage to set sail and are rescued a few weeks later at sea. End of game 29",
+                "choices": ["end_game"]
             },
-
             # ------------------------------
-            # NIVEL 9
+            # LEVEL 9
             # ------------------------------
-
-            # NIVEL 9A: Buscar comida - Viene de Nivel 8A
+            # LEVEL 9A: Look for food - Coming from #Level 8A
             {
-                "scenario": "Buscan comida en los alrededores y encuentran un árbol con frutas desconocidas. ¿Arriesgarse a comerlas (1) o buscar otra fuente de alimento (2)?",
+                "scenario": "You look for food in the surroundings and find a tree with unknown fruits. Risk eating them (1) or look for another food source (2)?",
                 "choices": [1, 2]
             },
-
-            # NIVEL 9B: Intentar pescar - Viene de Nivel 8A
+            # LEVEL 9B: Try fishing - Coming from #Level 8A
             {
-                "scenario": "Intentan pescar en el manantial, pero no hay peces. Sin embargo, encuentran un arroyo cercano. ¿Seguir el arroyo (1) o regresar al refugio (2)?",
+                "scenario": "You try fishing in the spring, but there are no fish. However, you find a nearby stream. Follow the stream (1) or return to the shelter (2)?",
                 "choices": [1, 2]
             },
-
-            # NIVEL 9C: Adaptación y rescate - Viene de Nivel 8A
+            # LEVEL 9C: Adaptation and rescue - Coming from #Level 8A
             {
-                "scenario": "Al separar vuestros caminos, uno logra adaptarse mejor a la isla mediante la pesca y el uso de utensilios creados a partir de madera, llegando a adaptarse a la isla y quedándose a vivir para siempre. El que decide buscar en los alrededores logra encontrar un barco que lo ayuda a salir de la isla y ser rescatado en alta mar semanas después. Final del juego 30",
-                "choices": []
+                "scenario": "By separating your paths, one manages to better adapt to the island through fishing and the use of utensils created from wood, adapting to the island and staying to live forever. The one who decides to look in the surroundings manages to find a boat that helps him leave the island and be rescued at sea weeks later. End of game 30",
+                "choices": ["end_game"]
             },
-
             # ------------------------------
-            # NIVEL 10
+            # LEVEL 10
             # ------------------------------
-
-            # NIVEL 10A: Alucinaciones mortales - Viene de Nivel 9A
+            # LEVEL 10A: Deadly hallucinations - Coming from #Level 9A
             {
-                "scenario": "Comen las frutas desconocidas. Lo que les provoca alucinaciones y matarse entre ambos. Final del juego 31",
-                "choices": []
+                "scenario": "You eat the unknown fruits. Which causes hallucinations and you kill each other. End of game 31",
+                "choices": ["end_game"]
             },
-
-            # NIVEL 10B: Adaptación definitiva - Viene de Nivel 9A
+            # LEVEL 10B: Definitive adaptation - Coming from #Level 9A
             {
-                "scenario": "Acaban encontrando unos huevos cerca de un nido de pájaros. La experiencia que vais adquiriendo os hace adaptaros a la isla y quedaros a sobrevivir. Final del juego 32",
-                "choices": []
+                "scenario": "You end up finding some eggs near a bird's nest. The experience you gain makes you adapt to the island and stay to survive. End of game 32",
+                "choices": ["end_game"]
             },
-
-            # NIVEL 10C: Suicidio por alucinaciones - Viene de Nivel 9A
+            # LEVEL 10C: Suicide by hallucinations - Coming from #Level 9A
             {
-                "scenario": "El que decide comer los frutos sufre grandes alucinaciones, lo que le provoca matar a su compañero y suicidarse después. Final del juego 33",
-                "choices": []
+                "scenario": "The one who decides to eat the fruits suffers great hallucinations, which causes him to kill his companion and then commit suicide. End of game 33",
+                "choices": ["end_game"]
             },
-
-            # NIVEL 10D: Explorar cueva oculta - Viene de Nivel 9B
+            # LEVEL 10D: Explore hidden cave - Coming from #Level 9B
             {
-                "scenario": "Siguen el arroyo y encuentran una cascada. Detrás de la cascada, hay una cueva oculta. ¿Explorar la cueva (1) o regresar al refugio (2)?",
+                "scenario": "You follow the stream and find a waterfall. Behind the waterfall, there is a hidden cave. Explore the cave (1) or return to the shelter (2)?",
                 "choices": [1, 2]
             },
-
-            # NIVEL 10E: Vida pacífica - Viene de Nivel 9B
+            # LEVEL 10E: Peaceful life - Coming from #Level 9B
             {
-                "scenario": "Deciden quedarse en la playa y construir una vida en la isla. Con el tiempo, aprenden a sobrevivir y encuentran paz en su nuevo hogar. Final del juego 34",
-                "choices": []
+                "scenario": "You decide to stay on the beach and build a life on the island. Over time, you learn to survive and find peace in your new home. End of game 34",
+                "choices": ["end_game"]
             },
-            # Escenario 10F: Ambos elijen regresar al refugio - Viene de 9B
+            # LEVEL 10F: Both choose to return to shelter - Coming from 9B
             {
-                "scenario": "Deciden quedarse en la playa y construir una vida en la isla. Con el tiempo, aprenden a sobrevivir y encuentran paz en su nuevo hogar. Final del juego 18",
-                "choices": []
+                "scenario": "You decide to stay on the beach and build a life on the island. Over time, you learn to survive and find peace in your new home. End of game 18",
+                "choices": ["end_game"]
             },
-
             # ------------------------------
-            # NIVEL 11
+            # LEVEL 11
             # ------------------------------
-
-            # NIVEL 11A: Tocar el altar - Viene de Nivel 10D
+            # LEVEL 11A: Touch the altar - Coming from #Level 10D
             {
-                "scenario": "Exploran la cueva y encuentran un antiguo altar con símbolos extraños. ¿Tocar el altar (1) o ignorarlo (2)?",
+                "scenario": "You explore the cave and find an ancient altar with strange symbols. Touch the altar (1) or ignore it (2)?",
                 "choices": [1, 2]
             },
-
-            # NIVEL 11B: Muerte en la cueva - Viene de Nivel 10D
+            # LEVEL 11B: Death in the cave - Coming from #Level 10D
             {
-                "scenario": "Al separar vuestros caminos, uno logra adaptarse mejor a la isla al volver al refugio, llegando a adaptarse a la isla y quedándose a vivir para siempre. El que decide explorar la cueva desaparece para siempre. Final del juego 35",
-                "choices": []
+                "scenario": "By separating your paths, one manages to better adapt to the island by returning to the shelter, adapting to the island and staying to live forever. The one who decides to explore the cave disappears forever. End of game 35",
+                "choices": ["end_game"]
             },
-
             # ------------------------------
-            # NIVEL 12
+            # LEVEL 12
             # ------------------------------
-
-            # NIVEL 12A: Conocimiento infinito - Viene de Nivel 11A
+            # LEVEL 12A: Infinite knowledge - Coming from #Level 11A
             {
-                "scenario": "Al tocar el altar, una luz brillante los envuelve. Una voz les ofrece conocimiento infinito a cambio de quedarse. ¿Aceptar (1) o rechazar (2)?",
+                "scenario": "When touching the altar, a bright light envelops you. A voice offers you infinite knowledge in exchange for staying. Accept (1) or reject (2)?",
                 "choices": [1, 2]
             },
-
-            # NIVEL 12B: Rescate por fogata - Viene de Nivel 11A
+            # LEVEL 12B: Rescue by bonfire - Coming from #Level 11A
             {
-                "scenario": "Deciden ignorar el altar. Al salir ven un barco en el horizonte. ¿Hacer fogata (1) o esperar (2)?",
+                "scenario": "You decide to ignore the altar. Upon exiting, you see a ship on the horizon. Make a bonfire (1) or wait (2)?",
                 "choices": [1, 2]
             },
-
-            # NIVEL 12C: Trampa mortal - Viene de Nivel 11A
+            # LEVEL 12C: Deadly trap - Coming from #Level 11A
             {
-                "scenario": "Uno toca el altar y desaparece. El otro intenta ayudarlo y cae en una trampa mortal. Final del juego 36",
-                "choices": []
+                "scenario": "One touches the altar and disappears. The other tries to help him and falls into a deadly trap. End of game 36",
+                "choices": ["end_game"]
             },
-
             # ------------------------------
-            # NIVEL 13
+            # LEVEL 13
             # ------------------------------
-
-            # NIVEL 13A: Inmortalidad cósmica - Viene de Nivel 12A
+            # LEVEL 13A: Cosmic immortality - Coming from #Level 12A
             {
-                "scenario": "Son transportados a una dimensión de conocimiento eterno. Donde descubren secretos cósmicos pero pierden su humanidad y se convierten en entidades inmortales. Final del juego 37",
-                "choices": []
+                "scenario": "You are transported to a dimension of eternal knowledge. Where you discover cosmic secrets but lose your humanity and become immortal entities. End of game 37",
+                "choices": ["end_game"]
             },
-
-            # NIVEL 13B: Escape de la cueva - Viene de Nivel 12A
+            # LEVEL 13B: Escape from the cave - Coming from #Level 12A
             {
-                "scenario": "La entidad se enfurece. La cueva colapsa. ¿Correr (1) o buscar salida alternativa (2)?",
+                "scenario": "The entity becomes enraged. The cave collapses. Run (1) or look for an alternative exit (2)?",
                 "choices": [1, 2]
             },
-
-            # NIVEL 13C: Rescate final - Viene de Nivel 12B
+            # LEVEL 13C: Final rescue - Coming from #Level 12B
             {
-                "scenario": "El barco los ve y consiguen ser rescatados. Final del juego 38",
-                "choices": []
+                "scenario": "The ship sees you and you manage to be rescued. End of game 38",
+                "choices": ["end_game"]
             },
-
             # ------------------------------
-            # NIVEL 14
+            # LEVEL 14
             # ------------------------------
-
-            # NIVEL 14A: Desierto árido - Viene de Nivel 13B
+            # LEVEL 14A: Arid desert - Coming from #Level 13B
             {
-                "scenario": "Logran escapar, pero el exterior ahora es un desierto árido, sin rastros de vida. Final del juego 39",
-                "choices": []
+                "scenario": "You manage to escape, but the outside is now an arid desert, with no traces of life. End of game 39",
+                "choices": ["end_game"]
             },
-
-            # NIVEL 14B: Rescate en alta mar - Viene de Nivel 13B
+            # LEVEL 14B: Rescue at sea - Coming from #Level 13B
             {
-                "scenario": "Buscan otra salida y encuentran un túnel que los lleva a una playa desierta. Intentan construir una balsa con los restos del naufragio. Después de varios intentos, logran zarpar y ser rescatados a las pocas semanas en alta mar. Final del juego 40",
-                "choices": []
+                "scenario": "You look for another exit and find a tunnel that leads you to a deserted beach. You try to build a raft with the remains of the shipwreck. After several attempts, you manage to set sail and are rescued a few weeks later at sea. End of game 40",
+                "choices": ["end_game"]
             },
-
-            # NIVEL 14C: Muerte en la cueva - Viene de Nivel 13B
+            # LEVEL 14C: Death in the cave - Coming from #Level 13B
             {
-                "scenario": "Al no ponerse de acuerdo, son sepultados por las piedras que van cayendo, dejando sus cuerpos sellados con la cueva. Final del juego 41",
-                "choices": []
+                "scenario": "By not agreeing, you are buried by the falling stones, leaving your bodies sealed with the cave. End of game 41",
+                "choices": ["end_game"]
             }
         ]
 
+        # State transition matrix: {current_scenario: {(decision1, decision2): next_scenario}}
         self.transitions = {
-            # NIVEL 0
+            # LEVEL 0
             0: {
                 (1, 1): 1, (2, 2): 3, (1, 2): 2, (2, 1): 2
             },
-            # NIVEL 1A
+            # LEVEL 1A
             1: {
                 (1, 1): 4, (2, 2): 6, (1, 2): 5, (2, 1): 5
             },
-            # NIVEL 1B
+            # LEVEL 1B
             2: {
                 (1, 1): 4, (2, 2): 7, (1, 2): 9, (2, 1): 9
             },
-            # NIVEL 1C
+            # LEVEL 1C
             3: {
                 (1, 1): 7, (2, 2): 10, (1, 2): 8, (2, 1): 8
             },
-            # NIVEL 2A
+            # LEVEL 2A
             4: {
                 (1, 1): 11, (2, 2): 13, (1, 2): 12, (2, 1): 12
             },
-            # NIVEL 2C
+            # LEVEL 2C
             6: {
                 (1, 1): 14, (2, 2): 16, (1, 2): 15, (2, 1): 15
             },
-            # NIVEL 2D
+            # LEVEL 2D
             7: {
                 (1, 1): 17, (2, 2): 18, (1, 2): 19, (2, 1): 19
             },
-            # NIVEL 3A
+            # LEVEL 3A
             11: {
                 (1, 1): 23, (2, 2): 24, (1, 2): 25, (2, 1): 25
             },
-            # NIVEL 3C
+            # LEVEL 3C
             13: {
                 (1, 1): 20, (2, 2): 21, (1, 2): 22, (2, 1): 22
             },
-            # NIVEL 3D
+            # LEVEL 3D
             14: {
                 (1, 1): 26, (2, 2): 27, (1, 2): 28, (2, 1): 28
             },
-            # NIVEL 4A
+            # LEVEL 4A
             20: {
                 (1, 1): 29, (2, 2): 30, (1, 2): 31, (2, 1): 31
             },
-            # NIVEL 4B
+            # LEVEL 4B
             21: {
                 (1, 1): 32, (2, 2): 33, (1, 2): 34, (2, 1): 34
             },
-            # NIVEL 5C
+            # LEVEL 5C
             31: {
                 (1, 1): 37, (2, 2): 38, (1, 2): 39, (2, 1): 39
             },
-            # NIVEL 5D
+            # LEVEL 5D
             32: {
                 (1, 1): 35, (2, 2): 36, (1, 2): 36, (2, 1): 36
             },
-            # NIVEL 6C
+            # LEVEL 6C
             37: {
                 (1, 1): 40, (2, 2): 41, (1, 2): 42, (2, 1): 42
             },
-            # NIVEL 6D
+            # LEVEL 6D
             38: {
                 (1, 1): 43, (2, 2): 44, (1, 2): 45, (2, 1): 45
             },
-            # NIVEL 7D
+            # LEVEL 7D
             43: {
                 (1, 1): 46, (2, 2): 47, (1, 2): 45, (2, 1): 45
             },
-            # NIVEL 8A
+            # LEVEL 8A
             46: {
                 (1, 1): 48, (2, 2): 49, (1, 2): 50, (2, 1): 50
             },
-            # NIVEL 9A
+            # LEVEL 9A
             48: {
                 (1, 1): 51, (2, 2): 52, (1, 2): 53, (2, 1): 53
             },
-            # NIVEL 9B
+            # LEVEL 9B
             49: {
                 (1, 1): 54, (2, 2): 55, (1, 2): 56, (2, 1): 56
             },
-            # NIVEL 10D
+            # LEVEL 10D
             54: {
                 (1, 1): 57, (2, 2): 58, (1, 2): 59, (2, 1): 59
             },
-            # NIVEL 11A
+            # LEVEL 11A
             57: {
                 (1, 1): 60, (2, 2): 61, (1, 2): 62, (2, 1): 62
             },
-            # NIVEL 12A
+            # LEVEL 12A
             59: {
                 (1, 1): 63, (2, 2): 64, (1, 2): 65, (2, 1): 65
             },
-            # NIVEL 13B
+            # LEVEL 13B
             63: {
                 (1, 1): 69, (2, 2): 70, (1, 2): 71, (2, 1): 71
-            }}
+            }
+        }
 
-        self.current_scenario = 0
-        self.player_decision = None
-        self.other_player_decision = None
-        self.game_over = False
-        self.game_result = ""
-        self.restart = False
+        # Game state management variables
+        self.current_scenario = 0  # Index of the active scenario in the scenarios list
+        self.player_decision = None  # Local player's current choice (1 or 2)
+        self.other_player_decision = None  # Networked player's current choice
+        self.game_over = False  # Flag indicating game termination status
+        self.game_result = ""  # Outcome description for end-game scenarios
+        self.restart = False  # Flag for game restart request
 
-    # ¡Este método es crítico y estaba faltante!
     def get_scenario(self):
         return self.scenarios[self.current_scenario]
 
     def get_state(self):
+        #Serialize game state for network transmission
         return {
-            "current_scenario": self.current_scenario,  # ¡Fundamental incluir esto!
+            "current_scenario": self.current_scenario,
             "player_decision": self.player_decision,
             "game_over": self.game_over,
             "game_result": self.game_result,
@@ -579,33 +509,38 @@ class Game:
         }
 
     def set_state(self, state):
-        # Sincronizar todos los elementos críticos
-        self.current_scenario = state.get("current_scenario", self.current_scenario)
+        #Synchronizes all critical elements of the game state
+        self.current_scenario = state.get(
+            "current_scenario", self.current_scenario)
         self.other_player_decision = state.get("player_decision", None)
         self.game_over = state.get("game_over", False)
         self.game_result = state.get("game_result", "")
         self.restart = state.get("restart", False)
 
     def process_decisions(self):
+        #Processes the decisions of both players and determines the next scenario."
         if self.player_decision and self.other_player_decision:
-            decisions = tuple(sorted([self.player_decision, self.other_player_decision]))
-            current_transitions = self.transitions.get(self.current_scenario, {})
+            decisions = tuple(
+                sorted([self.player_decision, self.other_player_decision]))
+
+            current_transitions = self.transitions.get(
+                self.current_scenario, {})
             next_scenario = current_transitions.get(decisions, None)
-            
+
             if next_scenario is not None:
                 self.current_scenario = next_scenario
-                # Resetear solo SI hay nuevo escenario
-                if self.scenarios[self.current_scenario]["choices"]:
-                    self.reset_decisions()
-                else:
+                if not self.scenarios[self.current_scenario]["choices"]:
                     self.game_over = True
-                    self.game_result = self.scenarios[self.current_scenario]["scenario"]
+            else:
+                self.game_over = True
 
     def reset_decisions(self):
+        #Clear current player choices for new decision round
         self.player_decision = None
         self.other_player_decision = None
 
     def reset_game(self, restart):
+        #Resets the game state
         if restart:
             self.current_scenario = 0
             self.player_decision = None

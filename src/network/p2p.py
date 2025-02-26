@@ -7,6 +7,7 @@ from game import Game
 
 def recv_data(sock):
     """Recibe un mensaje JSON del socket."""
+    # Receives a JSON message from the socket.
     try:
         raw_len = sock.recv(4)
         if not raw_len:
@@ -20,6 +21,7 @@ def recv_data(sock):
 
 def send_data(sock, message):
     """Envía un mensaje JSON a través del socket."""
+    # Sends a JSON message through the socket.
     try:
         data = json.dumps(message).encode('utf-8')
         msg_len = len(data).to_bytes(4, byteorder='big')
@@ -31,9 +33,12 @@ def send_data(sock, message):
 def handle_peer_connection(sock, game):
     """Maneja la recepción de decisiones del otro jugador."""
     while not game.game_over:
+    # Handles receiving decisions from the other player.
         peer_decision = recv_data(sock)
         if peer_decision and "decision" in peer_decision:
             game.other_player_decision = peer_decision["decision"]
+                retry_event.set()  # Notify that a restart response was received
+                # Synchronization signal to start a new game
         time.sleep(0.1)
 
 
@@ -63,6 +68,10 @@ def start_p2p(host, port, peer_host=None, peer_port=None):
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.connect((peer_host, peer_port))
+    while True:  # Main loop for game restarts
+        retry_event = threading.Event()  # Used to signal when a retry response is received
+        peer_retry_data = {"retry": None, "start_new_game": False}  # Shared data between threads
+        # Connection setup
             with lock:
                 connection = sock
             print(f"Conectado con {peer_host}:{peer_port}")
@@ -83,6 +92,23 @@ def start_p2p(host, port, peer_host=None, peer_port=None):
     # Hilo para manejar la comunicación entrante
     threading.Thread(target=handle_peer_connection, args=(
         connection, game), daemon=True).start()
+        # Establish connection
+        # Thread to receive decisions
+        # Main game loop
+                    # Handle end of game
+                    # Restart management
+                    # Send our decision first
+                    # Wait for confirmation with timeout
+                    retry_event.wait(timeout=15)  # Wait for signal or timeout
+                    retry_event.clear()  # Clear for future events
+                    # Decide on restart
+                        # Send signal that we are ready to start
+                        # Wait for the other node to be ready
+                            # Resend in case it wasn't received
+                        # Reset game and clear data
+                        exit_flag.set()  # Signal to stop receiver thread
+                # Get local player's decision
+                # Wait for remote player's decision
 
     while not game.game_over:
         scenario = game.get_scenario()
