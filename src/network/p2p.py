@@ -137,7 +137,6 @@ def start_p2p(host, port, peer_host=None, peer_port=None):
                     retry_event.clear()  # Clear for future events
 
                     # Decide on restart
-                    print(f"DEBUG: The other player chose: {peer_retry}")
                     if retry == "y" and peer_retry == "y":
                         print("\nRestarting...")
                         # Send signal that we are ready to start
