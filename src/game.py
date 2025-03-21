@@ -1,5 +1,5 @@
 class Game:
-    def __init__(self):
+    def __init__(self, peer_username="Partner"):
         # Scenario database containing all game paths and endings
 
         self.scenarios = [
@@ -488,6 +488,7 @@ class Game:
         }
 
         # Game state management variables
+        self.peer_username = peer_username
         self.current_scenario = 0  # Index of the active scenario in the scenarios list
         self.player_decision = None  # Local player's current choice (1 or 2)
         self.other_player_decision = None  # Networked player's current choice
@@ -499,7 +500,7 @@ class Game:
         return self.scenarios[self.current_scenario]
 
     def get_state(self):
-        #Serialize game state for network transmission
+        # Serialize game state for network transmission
         return {
             "current_scenario": self.current_scenario,
             "player_decision": self.player_decision,
@@ -509,7 +510,7 @@ class Game:
         }
 
     def set_state(self, state):
-        #Synchronizes all critical elements of the game state
+        # Synchronizes all critical elements of the game state
         self.current_scenario = state.get(
             "current_scenario", self.current_scenario)
         self.other_player_decision = state.get("player_decision", None)
@@ -518,35 +519,26 @@ class Game:
         self.restart = state.get("restart", False)
 
     def process_decisions(self):
-        #Processes the decisions of both players and determines the next scenario."
         if self.player_decision and self.other_player_decision:
             decisions = tuple(
                 sorted([self.player_decision, self.other_player_decision]))
-
             current_transitions = self.transitions.get(
                 self.current_scenario, {})
             next_scenario = current_transitions.get(decisions, None)
 
-            if next_scenario is not None:
-                self.current_scenario = next_scenario
-                if not self.scenarios[self.current_scenario]["choices"]:
-                    self.game_over = True
-            else:
-                self.game_over = True
+            self.current_scenario = next_scenario if next_scenario is not None else self.current_scenario
+            self.game_over = not self.scenarios[self.current_scenario].get(
+                "choices", False)
 
     def reset_decisions(self):
-        #Clear current player choices for new decision round
+        # Clear current player choices for new decision round
         self.player_decision = None
         self.other_player_decision = None
 
-    def reset_game(self, restart):
-        #Resets the game state
-        if restart:
-            self.current_scenario = 0
-            self.player_decision = None
-            self.other_player_decision = None
-            self.game_over = False
-            self.game_result = ""
-            self.restart = True
-        else:
-            self.restart = False
+    def full_reset(self):
+        # Reset all game state variables for a new game
+        self.current_scenario = 0
+        self.reset_decisions()
+        self.game_over = False
+        self.game_result = ""
+        self.restart = False
