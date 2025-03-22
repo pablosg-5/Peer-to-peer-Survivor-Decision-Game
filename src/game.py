@@ -1,5 +1,5 @@
 class Game:
-    def __init__(self, peer_username="Partner"):
+    def __init__(self, username, peer_usernames):
         # Scenario database containing all game paths and endings
 
         self.scenarios = [
@@ -488,57 +488,48 @@ class Game:
         }
 
         # Game state management variables
-        self.peer_username = peer_username
-        self.current_scenario = 0  # Index of the active scenario in the scenarios list
-        self.player_decision = None  # Local player's current choice (1 or 2)
-        self.other_player_decision = None  # Networked player's current choice
-        self.game_over = False  # Flag indicating game termination status
-        self.game_result = ""  # Outcome description for end-game scenarios
-        self.restart = False  # Flag for game restart request
+        self.username = username
+        self.peer_usernames = peer_usernames
+        self.current_scenario = 0
+        self.player_decision = None
+        self.received_decisions = {}
+        self.game_over = False
+        self.game_result = ""
 
     def get_scenario(self):
         return self.scenarios[self.current_scenario]
 
-    def get_state(self):
-        # Serialize game state for network transmission
-        return {
-            "current_scenario": self.current_scenario,
-            "player_decision": self.player_decision,
-            "game_over": self.game_over,
-            "game_result": self.game_result,
-            "restart": self.restart
-        }
-
-    def set_state(self, state):
-        # Synchronizes all critical elements of the game state
-        self.current_scenario = state.get(
-            "current_scenario", self.current_scenario)
-        self.other_player_decision = state.get("player_decision", None)
-        self.game_over = state.get("game_over", False)
-        self.game_result = state.get("game_result", "")
-        self.restart = state.get("restart", False)
+    def register_decision(self, username, decision):
+        self.received_decisions[username] = decision
 
     def process_decisions(self):
-        if self.player_decision and self.other_player_decision:
-            decisions = tuple(
-                sorted([self.player_decision, self.other_player_decision]))
-            current_transitions = self.transitions.get(
-                self.current_scenario, {})
-            next_scenario = current_transitions.get(decisions, None)
+        all_choices = [self.player_decision] + list(self.received_decisions.values())
+        
+        # Caso 1: 3 decisiones iguales
+        if all(c == all_choices[0] for c in all_choices):
+            self.apply_scenario_transition((all_choices[0], all_choices[0]))
+        
+        # Caso 2: 2 vs 1 (usar lógica de 2 jugadores)
+        else:
+            counts = {1:0, 2:0}
+            for c in all_choices:
+                counts[c] += 1
+            majority = 1 if counts[1] > counts[2] else 2
+            self.apply_scenario_transition((majority, majority))
 
-            self.current_scenario = next_scenario if next_scenario is not None else self.current_scenario
-            self.game_over = not self.scenarios[self.current_scenario].get(
-                "choices", False)
+    def apply_scenario_transition(self, decision_pair):
+        current_transitions = self.transitions.get(self.current_scenario, {})
+        next_scenario = current_transitions.get(decision_pair, None)
+        
+        self.current_scenario = next_scenario if next_scenario is not None else self.current_scenario
+        self.game_over = not self.scenarios[self.current_scenario].get("choices", False)
 
     def reset_decisions(self):
-        # Clear current player choices for new decision round
         self.player_decision = None
-        self.other_player_decision = None
+        self.received_decisions.clear()
 
     def full_reset(self):
-        # Reset all game state variables for a new game
         self.current_scenario = 0
         self.reset_decisions()
         self.game_over = False
         self.game_result = ""
-        self.restart = False
