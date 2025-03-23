@@ -28,14 +28,14 @@ def handle_peer_connection(sock, game, retry_event, peer_retry_data, exit_flag):
     sock.settimeout(2.0)
     while not exit_flag.is_set():
         try:
-            peer_decision = recv_data(sock)
-            if peer_decision:
-                if "decision" in peer_decision:
-                    game.register_decision(peer_decision["player"], peer_decision["decision"])
-                elif "retry" in peer_decision:
-                    peer_retry_data["retry"] = peer_decision["retry"]
+            data = recv_data(sock)
+            if data:
+                if "decision" in data:
+                    game.register_decision(data["player"], data["decision"])
+                elif "retry" in data:
+                    peer_retry_data[data["player"]] = data["retry"]  # Track by username
                     retry_event.set()
-                elif "start_new_game" in peer_decision:
+                elif "start_new_game" in data:
                     peer_retry_data["start_new_game"] = True
                     retry_event.set()
         except socket.timeout:
@@ -44,34 +44,32 @@ def handle_peer_connection(sock, game, retry_event, peer_retry_data, exit_flag):
             break
         time.sleep(0.1)
 
-def start_p2p(host, port,username, peers):
+def start_p2p(host, port, username, peers):
     exit_flag = threading.Event()
     connections = []
-    game = Game(username, [p["username"] for p in peers]) 
+    game = Game(username, [p["username"] for p in peers])
     retry_event = threading.Event()
-    peer_retry_data = {"retry": None, "start_new_game": False}
+    peer_retry_data = {}  # Now tracks responses by username
     lock = threading.Lock()
 
-    # Hilo para aceptar conexiones
+    # ==============================================
+    # Connection handling (improved for 3 players)
+    # ==============================================
     def accept_connections():
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server.bind((host, port))
         server.listen(2)
-        print(f"\n🕑 Waiting for connections on {host}:{port}...")
+        print(f"\n🕑 Waiting for incoming connections on {host}:{port}...")
         
-        connections_made = 0
-        while connections_made < 2 and not exit_flag.is_set():
-            try:
+        try:
+            while len(connections) < 2 and not exit_flag.is_set():
                 conn, addr = server.accept()
-                print(f"✅ Connection accepted from {addr}")
+                print(f"✅ Connection accepted from {addr[0]}:{addr[1]}")
                 connections.append(conn)
-                connections_made += 1
-            except:
-                break
-        server.close()
+        finally:
+            server.close()
 
-    # Hilo para conectar a peers
     def connect_to_peers():
         for peer in peers:
             retries = 0
@@ -80,42 +78,45 @@ def start_p2p(host, port,username, peers):
                     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                     sock.settimeout(10)
                     sock.connect((peer["ip"], peer["port"]))
-                    print(f"\n✅ Connected to {peer['username']}")
+                    print(f"\n✅ Successfully connected to {peer['username']}")
                     connections.append(sock)
                     break
                 except Exception as e:
-                    print(f"⚠️ Retrying connection to {peer['username']}... ({e})")
+                    print(f"⚠️ Failed to connect to {peer['username']}: {str(e)}")
                     retries += 1
                     time.sleep(2)
 
-    # Iniciar conexiones
-    acceptor_thread = threading.Thread(target=accept_connections, daemon=True)
-    connector_thread = threading.Thread(target=connect_to_peers, daemon=True)
-    acceptor_thread.start()
-    connector_thread.start()
-    
-    # Esperar conexiones
-    start_time = time.time()
-    while len(connections) < 2 and not exit_flag.is_set():
-        if time.time() - start_time > 30:
-            print("❌ Connection timeout")
-            exit_flag.set()
-            return
-        time.sleep(0.1)
-
-    # Hilos receptores
-    receiver_threads = []
-    for conn in connections:
-        thread = threading.Thread(
-            target=handle_peer_connection,
-            args=(conn, game, retry_event, peer_retry_data, exit_flag),
-            daemon=True
-        )
-        thread.start()
-        receiver_threads.append(thread)
-
-    # Bucle principal del juego
+    # ==============================================
+    # Game loop with proper 3-player synchronization
+    # ==============================================
     try:
+        # Establish connections
+        acceptor_thread = threading.Thread(target=accept_connections, daemon=True)
+        connector_thread = threading.Thread(target=connect_to_peers, daemon=True)
+        acceptor_thread.start()
+        connector_thread.start()
+
+        # Wait for connections with timeout
+        start_time = time.time()
+        while len(connections) < 2 and not exit_flag.is_set():
+            if time.time() - start_time > 30:
+                print("❌ Connection timeout")
+                exit_flag.set()
+                return
+            time.sleep(0.1)
+
+        # Start receiver threads
+        receiver_threads = []
+        for conn in connections:
+            thread = threading.Thread(
+                target=handle_peer_connection,
+                args=(conn, game, retry_event, peer_retry_data, exit_flag),
+                daemon=True
+            )
+            thread.start()
+            receiver_threads.append(thread)
+
+        # Main game loop
         while not exit_flag.is_set():
             scenario = game.get_scenario()
             
@@ -128,79 +129,97 @@ def start_p2p(host, port,username, peers):
                 game.game_over = True
 
             if game.game_over:
-                print("\nGAME OVER!")
+                print("\n💀 GAME OVER!")
                 time.sleep(1)
                 print(game.game_result)
                 print("=" * 50)
 
-                # Gestión de reinicio
+                # Restart logic for 3 players
                 retry = None
                 while retry not in ["y", "n"]:
-                    retry = input("\nRestart? (y/n): ").lower().strip()
+                    retry = input("\nPlay again? (y/n): ").lower().strip()
                     if retry not in ["y", "n"]:
                         print("Invalid option!")
 
-                # Enviar decisión a ambos peers
+                # Send decision to both peers
                 for conn in connections:
-                    send_data(conn, {"retry": retry})
-                print("Waiting for other players...")
+                    send_data(conn, {
+                        "retry": retry,
+                        "player": username  # Include username in restart message
+                    })
                 
-                retry_event.wait(timeout=15)
-                peer_retries = [peer_retry_data["retry"] for _ in range(2)]  # Para 2 peers
-                retry_event.clear()
+                print("\n🕒 Waiting for other players' responses...")
+                
+                # Wait for both peers to respond
+                start_wait = time.time()
+                required_peers = [p["username"] for p in peers]
+                while not exit_flag.is_set():
+                    received_peers = [p for p in required_peers if p in peer_retry_data]
+                    if len(received_peers) == 2:
+                        break
+                    if time.time() - start_wait > 15:
+                        print("⌛ Timeout waiting for players")
+                        break
+                    time.sleep(0.1)
 
-                if retry == "y" and all(r == "y" for r in peer_retries):
-                    print("\nRestarting game...")
+                # Check responses from both peers
+                peer_responses = [peer_retry_data.get(p, "n") for p in required_peers]
+                if retry == "y" and all(r == "y" for r in peer_responses):
+                    print("\n🔄 Restarting game with all players...")
+                    
+                    # Full reset with reconnection
                     game.full_reset()
-                    peer_retry_data.update({"retry": None, "start_new_game": False})
-                    
-                    # Reenviar señal de reinicio
+                    exit_flag.set()
                     for conn in connections:
-                        send_data(conn, {"start_new_game": True})
-                    
-                    # Esperar confirmación
-                    start_wait = time.time()
-                    while not peer_retry_data["start_new_game"] and time.time() - start_wait < 10:
-                        time.sleep(0.1)
-                    continue
+                        conn.close()
+                    exit_flag.clear()
+                    start_p2p(host, port, username, peers)  # Reinitialize
+                    return
                 else:
-                    print("\nGame over")
+                    print("\n❌ Not all players want to continue")
                     exit_flag.set()
                     return
 
-            # Obtener decisión local
+            # Decision making
             while True:
                 try:
                     choice = int(input("\nYour choice (1/2): "))
                     if choice in [1, 2]:
                         with lock:
                             game.player_decision = choice
+                        # Send to all peers with username
                         for conn in connections:
-                            send_data(conn, {"decision": choice})
+                            send_data(conn, {
+                                "decision": choice,
+                                "player": username
+                            })
                         break
                     print("Invalid option! Only 1 or 2")
                 except ValueError:
-                    print("Invalid input! Only numbers")
+                    print("Invalid input! Numbers only")
 
-            # Esperar 2 decisiones
-            print("\nWaiting for partners...")
+            # Wait for 2 decisions
+            print("\n⏳ Waiting for other players' decisions...")
             start_wait = time.time()
             while len(game.received_decisions) < 2 and not exit_flag.is_set():
                 if time.time() - start_wait > 30:
-                    print("Time expired!")
+                    print("⌛ Decision timeout!")
                     game.game_over = True
                     break
                 time.sleep(0.1)
 
-            # Procesar decisiones
-            print(f"\nDecisions received: {game.received_decisions}")
-            game.process_decisions()
-            game.reset_decisions()
-            input("\nPress Enter to continue...")
+            # Process decisions
+            if not exit_flag.is_set():
+                game.process_decisions()
+                game.reset_decisions()
+                input("\nPress Enter to continue...")
 
     except Exception as e:
-        print(f"Error: {str(e)}")
+        print(f"\n⚠️ Critical error: {str(e)}")
     finally:
         exit_flag.set()
         for conn in connections:
-            conn.close()
+            try:
+                conn.close()
+            except:
+                pass
