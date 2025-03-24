@@ -487,48 +487,68 @@ class Game:
             }
         }
 
-        # Game state management variables
-        self.username = username
-        self.peer_usernames = peer_usernames
-        self.current_scenario = 0
-        self.player_decision = None
-        self.received_decisions = {}
-        self.game_over = False
-        self.game_result = ""
+        # Game state management
+        self.username = username            # Current player's name
+        self.peer_usernames = peer_usernames  # Other players' names
+        self.current_scenario = 0           # Current scenario ID
+        self.player_decision = None         # Player's current choice
+        self.received_decisions = {}        # Decisions from peers
+        self.game_over = False              # Game status flag
+        self.game_result = ""               # Final game outcome text
 
     def get_scenario(self):
+        # Get current scenario data
         return self.scenarios[self.current_scenario]
 
     def register_decision(self, username, decision):
+        # Store decisions from network peers
         self.received_decisions[username] = decision
 
     def process_decisions(self):
-        all_choices = [self.player_decision] + list(self.received_decisions.values())
-        
-        # Caso 1: 3 decisiones iguales
-        if all(c == all_choices[0] for c in all_choices):
-            self.apply_scenario_transition((all_choices[0], all_choices[0]))
-        
-        # Caso 2: 2 vs 1 (usar lógica de 2 jugadores)
+        # Gather all choices: the player's decision + decisions received from peers
+        all_choices = [self.player_decision] + \
+            list(self.received_decisions.values())
+
+        # Check if there are exactly 3 players (the current player + 2 peers)
+        if len(all_choices) != 3:
+            raise ValueError("Exactly 3 decisions are required")
+
+        # Case 1: Unanimous decision (all players chose the same option)
+        if all(c == 1 for c in all_choices):
+            decision_pair = (1, 1)
+        elif all(c == 2 for c in all_choices):
+            decision_pair = (2, 2)
+        # Case 2: Mixed decision (2 vs 1)
         else:
-            counts = {1:0, 2:0}
-            for c in all_choices:
-                counts[c] += 1
-            majority = 1 if counts[1] > counts[2] else 2
-            self.apply_scenario_transition((majority, majority))
+            # Count votes for each option
+            count_1 = sum(1 for c in all_choices if c == 1)
+            count_2 = 3 - count_1  # The remaining votes are for option 2
+
+            # Determine the decision pair based on the majority
+            if count_1 > count_2:  # Majority chose option 1 (2-1)
+                decision_pair = (1, 2)
+            else:  # Majority chose option 2 (2-1)
+                decision_pair = (2, 1)
+
+        # Apply the scenario transition based on the final decision pair
+        self.apply_scenario_transition(decision_pair)
 
     def apply_scenario_transition(self, decision_pair):
         current_transitions = self.transitions.get(self.current_scenario, {})
         next_scenario = current_transitions.get(decision_pair, None)
-        
+
+        # Update game state
         self.current_scenario = next_scenario if next_scenario is not None else self.current_scenario
-        self.game_over = not self.scenarios[self.current_scenario].get("choices", False)
+        self.game_over = not self.scenarios[self.current_scenario].get(
+            "choices", False)
 
     def reset_decisions(self):
+        # Clear decisions for new round
         self.player_decision = None
         self.received_decisions.clear()
 
     def full_reset(self):
+        # Complete game state reset
         self.current_scenario = 0
         self.reset_decisions()
         self.game_over = False
