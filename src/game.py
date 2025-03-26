@@ -506,31 +506,35 @@ class Game:
 
     def process_decisions(self):
         # Gather all choices: the player's decision + decisions received from peers
-        all_choices = [self.player_decision] + \
-            list(self.received_decisions.values())
+        all_choices = [self.player_decision] + list(self.received_decisions.values())
 
-        # Check if there are exactly 3 players (the current player + 2 peers)
-        if len(all_choices) != 3:
-            raise ValueError("Exactly 3 decisions are required")
+        # if still you are 3 players
+        if len(all_choices) == 3:
+            if all(c == 1 for c in all_choices):
+                decision_pair = (1, 1)
+            elif all(c == 2 for c in all_choices):
+                decision_pair = (2, 2)
+            else:
+                count_1 = sum(1 for c in all_choices if c == 1)
+                count_2 = 3 - count_1 
 
-        # Case 1: Unanimous decision (all players chose the same option)
-        if all(c == 1 for c in all_choices):
-            decision_pair = (1, 1)
-        elif all(c == 2 for c in all_choices):
-            decision_pair = (2, 2)
-        # Case 2: Mixed decision (2 vs 1)
+                if count_1 > count_2:  
+                    decision_pair = (1, 2)
+                else:  
+                    decision_pair = (2, 1)
+
+        # if you are 2 players
+        elif len(all_choices) == 2:
+            p1, p2 = all_choices  # Unpack player decisions
+
+            if p1 == p2:
+                decision_pair = (p1, p1)
+            else:
+                decision_pair = (p1, p2)
+
         else:
-            # Count votes for each option
-            count_1 = sum(1 for c in all_choices if c == 1)
-            count_2 = 3 - count_1  # The remaining votes are for option 2
-
-            # Determine the decision pair based on the majority
-            if count_1 > count_2:  # Majority chose option 1 (2-1)
-                decision_pair = (1, 2)
-            else:  # Majority chose option 2 (2-1)
-                decision_pair = (2, 1)
-
-        # Apply the scenario transition based on the final decision pair
+            raise ValueError("Invalid number of decisions. Expected 2 or 3.")
+        
         self.apply_scenario_transition(decision_pair)
 
     def apply_scenario_transition(self, decision_pair):

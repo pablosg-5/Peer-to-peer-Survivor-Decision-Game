@@ -2,11 +2,14 @@ import socket
 import json
 import threading
 import time
+import random
 from game import Game
 
 # ==============================================
 # Network Protocol Utilities
 # ==============================================
+
+bot_players = set()  # Bot player list
 
 
 def recv_data(sock):
@@ -39,40 +42,21 @@ def send_data(sock, message):
 
 
 def handle_peer_connection(sock, game, retry_event, peer_retry_data, game_reset_event, exit_flag, lock, peers):
-    """
-    Thread target for handling incoming messages from a peer connection.
-    Handles three types of messages:
-    1. Player decisions (choice 1/2)
-    2. Retry requests after game over
-    3. New game synchronization messages
-    """
     sock.settimeout(2.0)
     while not exit_flag.is_set():
         try:
             data = recv_data(sock)
-            if data:
-                # Handle player decision messages
+            if data: 
                 if "decision" in data:
                     with lock:
-                        game.register_decision(
-                            data["player"], data["decision"])
-
-                # Handle game retry requests
+                        game.register_decision(data["player"], data["decision"])
+                        if "bot_decisions" in data:
+                            for bot, bot_decision in data["bot_decisions"].items():
+                                game.register_decision(bot, bot_decision)
                 elif "retry" in data:
                     with lock:
                         peer_retry_data[data["player"]] = data["retry"]
                     retry_event.set()
-
-                # Handle new game synchronization
-                elif "start_new_game" in data:
-                    with lock:
-                        if data["player"] not in peer_retry_data:
-                            peer_retry_data[data["player"]] = True
-                            print(
-                                f"\n🔄 Reset confirmation received from {data['player']}")
-                            if len(peer_retry_data) == len(peers):
-                                game.full_reset()
-                                game_reset_event.set()
         except socket.timeout:
             continue
         except:
@@ -126,6 +110,38 @@ def start_p2p(host, port, username, peers):
                         f"⚠️ Failed to connect to {peer['username']}: {str(e)}")
                     retries += 1
                     time.sleep(2)
+
+    def wait_for_decisions(game, timeout=30):
+        # Wait for player decisions with timeout
+        # if some player is missing, the game will continue with bots.
+        
+        player_to_wait = 2 - len(bot_players)
+
+        if (len(bot_players) == 2):
+            missing_players = [
+                p for p in game.peer_usernames if p not in game.received_decisions]
+            for player in missing_players:
+                bot_choice = random.choice([1, 2])
+                print(f"🤖 Bot ({player}) chooses option {bot_choice}")
+                time.sleep(1)
+                game.register_decision(player, bot_choice)
+        else:
+            print("\n⏳ Waiting for other players' decisions...")
+            start_wait = time.time()
+            while len(game.received_decisions) < player_to_wait and not exit_flag.is_set():
+                if time.time() - start_wait > timeout:
+                    print("\n⌛ Decision timeout! Checking missing players...\n")
+                    time.sleep(1)
+                    missing_players = [
+                        p for p in game.peer_usernames if p not in game.received_decisions]
+
+                    for player in missing_players:
+                        if player not in bot_players:
+                            print(f"🤖 {player} is eliminated of the game for desconection")
+                            bot_players.add(player)
+                    time.sleep(2)
+                    break
+                time.sleep(0.1)
 
     try:
         # ==============================================
@@ -197,32 +213,48 @@ def start_p2p(host, port, username, peers):
                 for conn in connections:
                     send_data(conn, {"retry": retry, "player": username})
 
-                print("\n🕒 Waiting for other players' responses...")
-                start_wait = time.time()
-                required_peers = [p["username"] for p in peers]
+                if len(bot_players) == 0:
+                    print("\n🕒 Waiting for other players' responses...")
+                    start_wait = time.time()
+                    required_peers = [p["username"] for p in peers]
 
-                # Wait for peer responses with timeout
-                while not exit_flag.is_set():
-                    with lock:
-                        received = all(
-                            p in peer_retry_data for p in required_peers)
-                    if received or (time.time() - start_wait > 25):
-                        break
-                    time.sleep(0.1)
+                    # Wait for peer responses with timeout
+                    while not exit_flag.is_set():
+                        with lock:
+                            received = all(
+                                p in peer_retry_data for p in required_peers)
+                        if received or (time.time() - start_wait > 25):
+                            break
+                        time.sleep(0.1)
 
-                # Handle restart or exit
-                if retry == "y" and all(peer_retry_data.get(p, "n") == "y" for p in required_peers):
-                    print("\n🔄 All players agreed! Synchronizing restart...")
-                    game.full_reset()
-                    peer_retry_data.clear()
-                    game_reset_event.clear()
-                    print("\n🔥 NEW GAME STARTED SUCCESSFULLY!")
-                    time.sleep(2)
-                    continue
+                    # Handle restart or exit
+                    if retry == "y" and all(peer_retry_data.get(p, "n") == "y" for p in required_peers):
+                        print("\n🔄 All players agreed! Synchronizing restart...")
+                        game.full_reset()
+                        peer_retry_data.clear()
+                        game_reset_event.clear()
+                        print("\n🔥 NEW GAME STARTED SUCCESSFULLY!")
+                        time.sleep(2)
+                        continue
+                    else:
+                        print("\n❌ Not all players want to continue")
+                        exit_flag.set()
+                        return
                 else:
-                    print("\n❌ Not all players want to continue")
-                    exit_flag.set()
-                    return
+                    if retry == "y":
+                        print("\n🤖 All players are bots! Synchronizing restart...")
+                        game.full_reset()
+                        peer_retry_data.clear()
+                        game_reset_event.clear()
+                        bot_players.add(game.peer_usernames[0])
+                        bot_players.add(game.peer_usernames[1])
+                        print("\n🔥 NEW GAME STARTED SUCCESSFULLY!")
+                        time.sleep(2)
+                        continue
+                    else:
+                        print("\nClosing game...")
+                        exit_flag.set()
+                        return
 
             # ==============================================
             # Player Decision Handling
@@ -234,9 +266,8 @@ def start_p2p(host, port, username, peers):
                         with lock:
                             game.player_decision = choice
                         # Broadcast decision to peers
-                        for conn in connections:
-                            send_data(
-                                conn, {"decision": choice, "player": username})
+                            for conn in connections:
+                                send_data(conn, {"decision": choice, "player": username})
                         break
                     print("Invalid option! Only 1 or 2")
                 except ValueError:
@@ -245,14 +276,9 @@ def start_p2p(host, port, username, peers):
             # ==============================================
             # Decision Synchronization
             # ==============================================
-            print("\n⏳ Waiting for other players' decisions...")
-            start_wait = time.time()
-            while len(game.received_decisions) < 2 and not exit_flag.is_set():
-                if time.time() - start_wait > 30:
-                    print("\n⌛ Decision timeout! Closing game...")
-                    exit_flag.set()
-                    return
-                time.sleep(0.1)
+            wait_for_decisions(game)  # wait for other players decisions
+            if len(game.received_decisions) < 2:
+                wait_for_decisions(game) # if only get the bots, repeteat one time for the decision of the bots
 
             # Process decisions if synchronization successful
             if not exit_flag.is_set():
