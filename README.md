@@ -27,27 +27,44 @@ The Peer-to-Peer Decision-Making Game is a multiplayer survival game where two p
 ### Setup
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/Peer-to-peer-Survivor-Decision-Game.git
+git clone https://github.com/pablosg-5/Peer-to-peer-Survivor-Decision-Game.git
+
+# Install dependencies in the directory
+pip install -r requirements.txt
 
 # Navigate to project directory
 cd Peer-to-peer-Survivor-Decision-Game/src
 
-# Install dependencies
-pip install -r requirements.txt
+# Navigate to project directory
+cd Peer-to-peer-Survivor-Decision-Game/src/network
+
+# Here execute
+python server.py
+
+# Navigate to project directory in other terminal
+cd Peer-to-peer-Survivor-Decision-Game/src
+
+# And execute 3 times
+python main.py
 ```
 
 
 ### Game Flow
 Initial Setup
 
-Both players will see the connection status:
+All players will see the connection status:
 ```bash
-Waiting for connection on localhost:5000...
-Connected to peer at 127.0.0.1:5001
+Welcome to the True Peer-to-Peer Decision-Making Game!
+Enter your username: x
+🌐 Your connection details:
+IP Address: x.x.x.x
+Port: x
+Connecting to matchmaking server...
 ```
+
 Scenario Presentation
 
-The game will display the current scenario:
+When 3 players are connected to the server the game will display the current scenario:
 ```bash
 ==================================================
 Your ship has been wrecked by a storm...
@@ -66,7 +83,7 @@ Enter your choice (1 or 2) and press Enter.
 
 Waiting for Peer
 
-After submitting your choice, the game will wait for the other player:
+After submitting your choice, the game will wait for the other players:
 ```bash
 Waiting for the other player's decision...
 ```
